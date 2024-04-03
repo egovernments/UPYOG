@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.pt.models.Locality;
 import org.egov.pt.models.Property;
 import org.egov.pt.repository.ServiceRequestRepository;
@@ -23,6 +24,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
 @Service
+@Slf4j
 public class BoundaryService {
 
 	@Value("${egov.location.host}")
@@ -50,14 +52,18 @@ public class BoundaryService {
 	 */
 	public void getAreaType(Property property, RequestInfo requestInfo, String hierarchyTypeCode) {
 
-		if (ObjectUtils.isEmpty(property))
+		if (ObjectUtils.isEmpty(property)){
+			log.warn("Property is empty. Skipping processing.");
 			return;
+		}
+
 
 		String tenantId = property.getTenantId();
 
-		if (property.getAddress() == null || property.getAddress().getLocality() == null)
+		if (property.getAddress() == null || property.getAddress().getLocality() == null){
+			log.error("INVALID ADDRESS: The address or locality cannot be null");
 			throw new CustomException("INVALID ADDRESS", "The address or locality cannot be null");
-
+		}
 		StringBuilder uri = new StringBuilder(locationHost);
 		uri.append(locationContextPath).append(locationEndpoint);
 		uri.append("?").append("tenantId=").append(tenantId);
