@@ -1,11 +1,11 @@
 import { useQuery } from "react-query";
 import { getMultipleTypes, getGeneralCriteria } from "../../services/elements/MDMS";
-import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
+import { MdmsService } from "../../services/elements/MDMS";
 
 const WSSearchMdmsTypes = {
   useWSMDMSBillAmendment: ({ tenantId, config = {} }) => {
     const BillAmendmentMdmsDetails = getMultipleTypes(tenantId, "BillAmendment", ["documentObj", "DemandRevisionBasis"]);
-    return useQuery([tenantId, "WS_BILLAMENDMENT_MDMS"], () => MdmsServiceV2.getDataByCriteria(tenantId, BillAmendmentMdmsDetails, "BillAmendment"), {
+    return useQuery([tenantId, "WS_BILLAMENDMENT_MDMS"], () => MdmsService.getDataByCriteria(tenantId, BillAmendmentMdmsDetails, "BillAmendment"), {
       select: ({ BillAmendment }) => {
         return BillAmendment?.DemandRevisionBasis.map((e, index) => {
           return { ...e, i18nKey: `DEMAND_REVISION_BASIS_${e.code}`, allowedDocuments: BillAmendment?.documentObj[index] };
@@ -18,7 +18,7 @@ const WSSearchMdmsTypes = {
     useQuery(
       [tenantId, type, "WS_WS_SERVICES_MASTERS"],
       () =>
-        MdmsServiceV2.getDataByCriteria(
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
@@ -56,7 +56,7 @@ const WSSearchMdmsTypes = {
     useQuery(
       [tenantId, "WS_WS_SERVICES_CALCULATION"],
       () =>
-        MdmsServiceV2.getDataByCriteria(
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
