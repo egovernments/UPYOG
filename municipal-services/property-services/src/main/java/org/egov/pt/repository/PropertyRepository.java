@@ -177,6 +177,7 @@ public class PropertyRepository {
 	public List<Property> getPropertiesWithOwnerInfo(PropertyCriteria criteria, RequestInfo requestInfo, Boolean isInternal) {
 
 		List<Property> properties;
+		ObjectMapper objectMapper = new ObjectMapper();
 
 		if(criteria.getTenantId() == null)
 		{	criteria.setTenantId(config.getStateLevelTenantId()); }
@@ -197,10 +198,19 @@ public class PropertyRepository {
 
 		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
 		userSearchRequest.setUuid(ownerIds);
-
-		log.info("userSearchReaquest: {}",userSearchRequest);
+		try{
+			String userSearchRequestString = objectMapper.writeValueAsString(userSearchRequest);
+			log.info("userSearchReaquest: {}",userSearchRequestString);
+		}catch (Exception e) {
+			log.error("Failed to convert userDetailResponse to JSON", e);
+		}
 		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
-		log.info("userDetailResponse: {}",userDetailResponse);
+		try{
+			String userDetailResponseString = objectMapper.writeValueAsString(userDetailResponse);
+			log.info("userSearchReaquest: {}",userDetailResponseString);
+		}catch (Exception e) {
+			log.error("Failed to convert userDetailResponse to JSON", e);
+		}
 		util.enrichOwner(userDetailResponse, properties, isOpenSearch);
 		return properties;
 	}
