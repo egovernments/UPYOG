@@ -34,6 +34,7 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.common.collect.Sets;
 
