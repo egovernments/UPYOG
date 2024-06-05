@@ -212,7 +212,9 @@ public class PropertyRepository {
 		}catch (Exception e) {
 			log.error("Failed to convert userDetailResponse to JSON", e);
 		}
+		log.info("properties before enriching user {}",properties);
 		util.enrichOwner(userDetailResponse, properties, isOpenSearch);
+		log.info("properties after enriching user {}",properties);
 		return properties;
 	}
 
