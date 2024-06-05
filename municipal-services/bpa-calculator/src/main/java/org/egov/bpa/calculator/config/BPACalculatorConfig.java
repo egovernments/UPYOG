@@ -101,7 +101,7 @@ public class BPACalculatorConfig {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsSearchEndpoint;
-
+    
 
 //    Kafka Topics
     @Value("${persister.save.bpa.calculation.topic}")

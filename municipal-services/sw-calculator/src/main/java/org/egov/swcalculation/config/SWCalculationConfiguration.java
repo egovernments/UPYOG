@@ -36,7 +36,7 @@ public class SWCalculationConfiguration {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndPoint;
-
+	
 	// sewerage Registry
 	@Value("${egov.sw.host}")
 	private String sewerageConnectionHost;
