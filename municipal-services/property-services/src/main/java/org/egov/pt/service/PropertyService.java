@@ -509,6 +509,7 @@ public class PropertyService {
 
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
 				log.info("In Property Search before filtering");
+				log.info("Properties before filtering: {}", properties);
 
 				filterPropertiesForUser(properties, criteria.getOwnerIds());
 				log.info("After filtering properties for user");
