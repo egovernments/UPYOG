@@ -36,6 +36,9 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 
@@ -56,6 +59,13 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			if (null == currentProperty) {
 
 				Address address = getAddress(rs, tenanId);
+
+				try{
+					String addressString = mapper.writeValueAsString(address);
+					log.info("addressString: {}",addressString);
+				}catch (Exception e) {
+					log.error("Failed to convert addressString to JSON", e);
+				}
 
 				AuditDetails auditdetails = getAuditDetail(rs, "property");
 
