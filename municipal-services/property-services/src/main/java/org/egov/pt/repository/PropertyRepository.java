@@ -99,6 +99,7 @@ public class PropertyRepository {
 			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
 					"TenantId length is not sufficient to replace query schema in a multi state instance");
 		}
+		log.info("Final query::",query);
 		if (isApiOpen)
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
 		if(criteria.getIsDefaulterNoticeSearch())
