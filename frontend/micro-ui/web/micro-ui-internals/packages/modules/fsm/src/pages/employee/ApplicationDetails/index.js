@@ -45,6 +45,8 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const [imageZoom, setImageZoom] = useState(null);
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
+  const [viewTimeline, setViewTimeline]=useState(false);
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
   const [showOptions, setShowOptions] = useState(false);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -58,7 +60,7 @@ const ApplicationDetails = (props) => {
     tenantId,
     applicationNumber,
     {},
-    props.userType
+    "EMPLOYEE"
   );
   const { isLoading: isDataLoading, isSuccess, data: applicationData } = Digit.Hooks.fsm.useSearch(
     tenantId,
@@ -89,9 +91,9 @@ const ApplicationDetails = (props) => {
           applicationData?.advanceAmount === null
         ? "FSM_ZERO_PAY_SERVICE"
         : "FSM",
-    role: DSO ? "FSM_DSO" : "FSM_EMPLOYEE",
+    role: "FSM_EMPLOYEE",
     serviceData: applicationDetails,
-    getTripData: DSO ? false : true,
+    getTripData: true,
   });
 
   useEffect(() => {
@@ -145,7 +147,14 @@ const ApplicationDetails = (props) => {
   const closeToast = () => {
     setShowToast(null);
   };
-
+  
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   const submitAction = (data) => {
     mutate(data, {
       onError: (error, variables) => {
@@ -180,6 +189,7 @@ const ApplicationDetails = (props) => {
         date: checkpoint?.auditDetails?.created,
         name: checkpoint?.assigner,
         mobileNumber: applicationData?.citizen?.mobileNumber,
+        emailId:applicationData?.citizen?.emailId,
         source: applicationData?.source || "",
       };
       return <TLCaption data={caption} />;
@@ -279,27 +289,18 @@ const ApplicationDetails = (props) => {
   if (isLoading) {
     return <Loader />;
   }
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
 
   return (
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <div className="employee-application-details" style={{ marginBottom: "15px" }}>
-            <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>
-            <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
-              onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
-              style={{ marginTop: "10px" }}
-              downloadBtnClassName={"employee-download-btn-className"}
-              optionsClassName={"employee-options-btn-className"}
-              options={dowloadOptions}
-              displayOptions={isDisplayDownloadMenu}
-
-              // displayOptions={showOptions}
-              // options={dowloadOptions}
-            />
+          <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header> 
+          <div style={{display:"flex", marginLeft:'500px', color:"#A52A2A"}}>
+          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
           </div>
-
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (
               <LinkButton
@@ -361,6 +362,7 @@ const ApplicationDetails = (props) => {
             {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
             {!workflowDetails?.isLoading && !isDataLoading && (
               <Fragment>
+                <div id="timeline">
                 <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
                   {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
                 </CardSectionHeader>
@@ -373,7 +375,7 @@ const ApplicationDetails = (props) => {
                 ) : (
                   <ConnectingCheckPoints>
                     {workflowDetails?.data?.timeline &&
-                      workflowDetails?.data?.timeline.map((checkpoint, index, arr) => {
+                      workflowDetails?.data?.timeline.slice(0,showAllTimeline? workflowDetails.data.timeline.length:2).map((checkpoint, index, arr) => {
                         return (
                           <React.Fragment key={index}>
                             <CheckPoint
@@ -387,6 +389,11 @@ const ApplicationDetails = (props) => {
                       })}
                   </ConnectingCheckPoints>
                 )}
+                {workflowDetails?.data?.timeline?.length > 2 && (
+                  <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+                  </LinkButton>   
+                )} 
+                </div>
               </Fragment>
             )}
           </Card>

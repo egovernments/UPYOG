@@ -11,6 +11,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -136,7 +137,7 @@ public class ChallanConfiguration {
 
     @Value("${mdms.v2.search.endpoint}")
     private String mdmsEndPoint;
-
+    
     @Value("${is.external.workflow.enabled}")
     private Boolean isExternalWorkFlowEnabled;
 
@@ -200,6 +201,9 @@ public class ChallanConfiguration {
 
     @Value("${state.level.tenant.id}")
     public String stateLevelTenantId;
+
+    @Value("#{${egov.ui.app.host.map}}")
+    private Map<String, String> uiAppHostMap;
 
     //collection
     @Value("${egov.collection.service.host}")

@@ -7,7 +7,7 @@ msg() {
 }
 
 # msg "Pre-building all packages"
-# yarn build
+# yarn install && yarn build
 # sleep 5
 
 # msg "Building and publishing css"
@@ -72,3 +72,5 @@ cd "$BASEDIR/packages/modules/ws" &&  rm -rf node_modules &&  rm -rf dist && yar
 msg "Building and publishing ws module"
 cd "$BASEDIR/packages/modules/mCollect" &&  rm -rf node_modules &&  rm -rf dist && yarn build &&   npm publish --tag upyog-2.9
 
+msg "Building and publishing mCollect module"
+cd "$BASEDIR/packages/modules/mCollect" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 

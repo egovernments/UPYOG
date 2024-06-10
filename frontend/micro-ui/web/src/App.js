@@ -16,9 +16,9 @@ import {
   PaymentModule,
   PaymentLinks,
   paymentConfigs,
-} from "@egovernments/digit-ui-module-common";
-import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { initLibraries } from "@egovernments/digit-ui-libraries";
+} from "@upyog/digit-ui-module-common";
+import { DigitUI } from "@upyog/digit-ui-module-core";
+import { initLibraries } from "@upyog/digit-ui-libraries";
 import {
   HRMSModule,
   initHRMSComponents,
@@ -28,12 +28,17 @@ import {
   TLLinks,
   initTLComponents,
 } from "@upyog/digit-ui-module-tl";
+import {
+  PTRModule,
+  PTRLinks,
+  PTRComponents,
+} from "@upyog-niua/upyog-ui-module-ptr";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
+import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
-import { initWSComponents } from "@egovernments/digit-ui-module-ws";
-// import { initCustomisationComponents } from "./Customisations";
+import { initWSComponents } from "@upyog/digit-ui-module-ws";
+import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
@@ -64,6 +69,7 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
+  "PTR"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -78,6 +84,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
   TLModule,
   TLLinks,
   ReceiptsModule,
+  PTRModule,
+  PTRLinks,
+  ...PTRComponents,
 });
 
 initPGRComponents();
