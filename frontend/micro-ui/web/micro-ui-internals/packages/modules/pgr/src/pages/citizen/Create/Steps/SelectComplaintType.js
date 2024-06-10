@@ -23,7 +23,6 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     return priorityLevel? priorityLevel:{};
   })
   const goNext = () => {
-    console.log("complaintType",complaintType)
     sessionStorage.setItem("complaintType",JSON.stringify(complaintType))
     onSelect({ subType , priorityLevel});
   };
@@ -118,10 +117,10 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     //setPriorityMenu(await serviceDefinitions.getSubMen)
   }
 
-  function selectedValue(value) {
-    setComplaintType(value);
-    window.Digit.SessionStorage.set("complaintType", value);
-  }
+  // function selectedValue(value) {
+  //   setComplaintType(value);
+  //   window.Digit.SessionStorage.set("complaintType", value);
+  // }
   return (
     <TypeSelectCard
       {...textParams}
