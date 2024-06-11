@@ -9,7 +9,7 @@ import {
   PTModule,
   PTLinks,
   PTComponents,
-} from "@upyog/digit-ui-module-pt";
+} from "@egovernments/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import {
