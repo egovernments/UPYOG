@@ -5,10 +5,10 @@ RUN apk add --no-cache git>2.30.0
 RUN yarn add @egovernments/digit-ui-libraries
 RUN yarn add @egovernments/digit-ui-module-pt
 RUN yarn add @egovernments/digit-ui-module-fsm
-RUN yarn add @upyog/digit-ui-module-tl
+RUN yarn add @egovernments/digit-ui-module-tl
 RUN yarn add @egovernments/digit-ui-module-dss
 RUN yarn add @egovernments/digit-ui-module-mcollect
-RUN yarn add @upyog/digit-ui-module-pgr
+RUN yarn add @egovernments/digit-ui-module-pgr
 RUN yarn add @egovernments/digit-ui-module-noc
 RUN yarn add @egovernments/digit-ui-module-engagement
 RUN yarn add @egovernments/digit-ui-module-hrms

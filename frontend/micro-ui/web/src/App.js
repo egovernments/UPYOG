@@ -3,7 +3,7 @@ import React from "react";
 import {
   initPGRComponents,
   PGRReducers,
-} from "@upyog/digit-ui-module-pgr";
+} from "@egovernments/digit-ui-module-pgr";
 import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
 import {
   PTModule,
@@ -27,8 +27,8 @@ import {
   TLModule,
   TLLinks,
   initTLComponents,
-} from "@upyog/digit-ui-module-tl";
-import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
+} from "@egovernments/digit-ui-module-tl";
+import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";

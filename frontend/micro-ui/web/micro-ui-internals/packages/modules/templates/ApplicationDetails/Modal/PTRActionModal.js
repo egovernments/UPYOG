@@ -1,8 +1,8 @@
 import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
-import { configPTVerifyApplication, configPTApproverApplication, configPTAssessProperty } from "../config";
-import * as predefinedConfig from "../config";
+import { configPTRApproverApplication} from "../config";
+
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -24,6 +24,8 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
+
+  console.log("applicationData",applicationData);
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     tenantId,
     {
@@ -32,18 +34,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     },
     { enabled: !action?.isTerminateState }
   );
-  const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
-    tenantId,
-    businessService,
-    "FINANCIAL_YEARLS",
-    {},
-    {
-      details: {
-        tenantId: Digit.ULBService.getStateId(),
-        moduleDetails: [{ moduleName: "egf-master", masterDetails: [{ name: "FinancialYear", filter: "[?(@.module == 'PT')]" }] }],
-      },
-    }
-  );
+
 
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
@@ -52,15 +43,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
-  const [financialYears, setFinancialYears] = useState([]);
-  const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
+ 
   const [disableActionSubmit, setDisableActionSubmit] = useState(false);
 
-  useEffect(() => {
-    if (financialYearsData && financialYearsData["egf-master"]) {
-      setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
-    }
-  }, [financialYearsData]);
+  
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
@@ -78,7 +64,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
         } else {
           try {
-            const response = await Digit.UploadServices.Filestorage("PT", file, Digit.ULBService.getStateId());
+            const response = await Digit.UploadServices.Filestorage("PTR", file, Digit.ULBService.getStateId());
             if (response?.data?.files?.length > 0) {
               setUploadedFile(response?.data?.files[0]?.fileStoreId);
             } else {
@@ -91,69 +77,34 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       }
     })();
   }, [file]);
+  
 
   function submit(data) {
-    if (action?.action == "INACTIVE_PROPERTY"){
-      // console.log("dataaaaa123",data)
-      let workflow = { action: "OPEN", comment: data?.comments, businessService:"PT.CREATE", moduleName: "PT" };
-      applicationData.creationReason = "STATUS"
-      submitAction({
-        customFunctionToExecute: action?.customFunctionToExecute,
-        Property: {
-          ...applicationData,
-          workflow,
-        },
-      });
-          }
-    else if (!action?.showFinancialYearsModal) {
-      let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
-      workflow["assignes"] = action?.isTerminateState || !selectedApprover ? [] : [selectedApprover];
+      let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
       if (uploadedFile)
         workflow["documents"] = [
           {
             documentType: action?.action + " DOC",
             fileName: file?.name,
-            fileStoreId: uploadedFile,
+            filestoreId: uploadedFile,
           },
         ];
-
       submitAction({
-        Property: {
-          ...applicationData,
-          workflow,
-        },
+        PetRegistrationApplications: [
+          {
+            ...applicationData,
+            workflow,
+          },
+        ],
       });
-    } 
-      else {
-      submitAction({
-        customFunctionToExecute: action?.customFunctionToExecute,
-        Assessment: {
-          financialYear: selectedFinancialYear?.name,
-          propertyId: applicationData?.propertyId,
-          tenantId,
-          source: applicationData?.source,
-          channel: applicationData?.channel,
-          assessmentDate: Date.now(),
-        },
-      });
-    }
+    //  } 
+   
   }
 
   useEffect(() => {
     if (action) {
-      if (action?.showFinancialYearsModal) {
-        setConfig(
-          configPTAssessProperty({
-            t,
-            action,
-            financialYears,
-            selectedFinancialYear,
-            setSelectedFinancialYear,
-          })
-        );
-      } else {
-        setConfig(
-          configPTApproverApplication({
+      setConfig(
+          configPTRApproverApplication({
             t,
             action,
             approvers,
@@ -165,9 +116,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             businessService,
           })
         );
-      }
+      
     }
-  }, [action, approvers, financialYears, selectedFinancialYear, uploadedFile]);
+  }, [action, approvers, uploadedFile]);
 
   return action && config.form ? (
     <Modal
@@ -177,12 +128,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
-      isDisabled={!action.showFinancialYearsModal ? PTALoading || (action?.docUploadRequired && !uploadedFile) : !selectedFinancialYear}
       formId="modal-action"
     >
-      {financialYearsLoading ? (
-        <Loader />
-      ) : (
+       
         <FormComposer
           config={config.form}
           noBoxShadow
@@ -191,9 +139,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           onSubmit={submit}
           defaultValues={defaultValues}
           formId="modal-action"
-          // isDisabled={!action.showFinancialYearsModal ? PTALoading || (!action?.isTerminateState && !selectedApprover?.uuid) : !selectedFinancialYear}
         />
-      )}
+      
     </Modal>
   ) : (
     <Loader />
