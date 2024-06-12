@@ -157,6 +157,9 @@ public class FSMConfiguration {
 	    @Value("${mdms.v2.search.endpoint}")
 	    private String mdmsEndPoint;
 
+	    @Value("${mdms.v2.search.endpoint}")
+	    private String mdmsEndPoint;
+		
 		// Allowed Search Parameters
 		@Value("${citizen.allowed.search.params}")
 		private String allowedCitizenSearchParameters;
