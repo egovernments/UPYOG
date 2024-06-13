@@ -38,7 +38,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
-@Builder(builderMethodName = "propertyBuilder")
 public class Property extends PropertyInfo {
 
 	@JsonProperty("acknowldgementNumber")
