@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder(toBuilder = true)
+@Builder
 public class PropertyInfo {
 
 	@JsonProperty("id")
