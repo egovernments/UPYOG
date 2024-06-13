@@ -9,6 +9,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import lombok.experimental.SuperBuilder;
 import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Source;
@@ -31,12 +32,13 @@ import lombok.ToString;
  * Property
  */
 
-@ToString
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public class Property extends PropertyInfo {
 
 	@JsonProperty("acknowldgementNumber")

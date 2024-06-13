@@ -4,15 +4,11 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.egov.pt.models.enums.Status;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * This is lightweight property object that can be used as reference by
@@ -25,6 +21,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class PropertyInfo {
 
 	@JsonProperty("id")
