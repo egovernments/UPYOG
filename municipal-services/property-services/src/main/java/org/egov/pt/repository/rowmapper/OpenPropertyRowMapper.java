@@ -43,6 +43,8 @@ public class OpenPropertyRowMapper implements ResultSetExtractor<List<Property>>
 				currentProperty = Property.builder()
 						.creationReason(CreationReason.fromValue(rs.getString("creationReason")))
 						.auditDetails(auditdetails)
+						.id(propertyUuId)
+						.address(address)
 						.build();
 
 
