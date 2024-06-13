@@ -1,29 +1,20 @@
 package digit.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.config.Configuration;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
+import digit.models.coremodels.*;
+import digit.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.common.contract.models.Workflow;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import digit.config.Configuration;
-import digit.models.coremodels.BusinessService;
-import digit.models.coremodels.BusinessServiceResponse;
-import digit.models.coremodels.ProcessInstance;
-import digit.models.coremodels.ProcessInstanceRequest;
-import digit.models.coremodels.ProcessInstanceResponse;
-import digit.models.coremodels.RequestInfoWrapper;
-import digit.models.coremodels.State;
-import digit.models.coremodels.Workflow;
-import digit.repository.ServiceRequestRepository;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkflowUtil {
@@ -121,7 +112,7 @@ public class WorkflowUtil {
         processInstance.setModuleName(wfModuleName);
         processInstance.setTenantId(tenantId);
         processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
-        processInstance.setDocuments(workflow.getVerificationDocuments());
+        //processInstance.setDocuments(workflow.getVerificationDocuments());
         processInstance.setComment(workflow.getComments());
 
         if(!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -159,7 +150,7 @@ public class WorkflowUtil {
                 .action(processInstance.getAction())
                 .assignes(userIds)
                 .comments(processInstance.getComment())
-                .verificationDocuments(processInstance.getDocuments())
+                //.verificationDocuments(processInstance.getDocuments())
                 .build();
 
             businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);
