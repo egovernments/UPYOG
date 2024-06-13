@@ -108,6 +108,8 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.auditDetails(auditdetails)
 						.institution(institute)
 						.landArea(landArea)
+						.address(address)
+						.id(propertyUuId)
 						.build();
 
 
