@@ -294,7 +294,7 @@ public class NotificationUtil {
 	public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action){
 		List<String> masterData = new ArrayList<>();
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getMdmsHost2()).append(config.getMdmsUrl2());
+		uri.append(config.getMdmsHost()).append(config.getMdmsUrl());
 		if(StringUtils.isEmpty(tenantId))
 			return masterData;
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, centralInstanceUtil.getStateLevelTenant(tenantId));
