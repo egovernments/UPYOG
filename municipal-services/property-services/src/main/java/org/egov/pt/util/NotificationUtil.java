@@ -648,7 +648,10 @@ public class NotificationUtil {
 
     public String getHost(String tenantId) {
         String stateLevelTenantId = centralInstanceUtil.getStateLevelTenant(tenantId);
-        return config.getUiAppHostMap().get(stateLevelTenantId);
+        String host = config.getUiAppHost();
+        if(config.getUiAppHostMap().get(stateLevelTenantId) != null)
+        	host = config.getUiAppHostMap().get(stateLevelTenantId);
+        return host;
     }
 
     /**

@@ -196,6 +196,9 @@ public class PropertyConfiguration {
     //USER EVENTS
 	@Value("#{${egov.ui.app.host.map}}")
 	private Map<String, String> uiAppHostMap;
+	
+	@Value("{${egov.ui.app.host}}")
+	private String uiAppHost;
     
 	@Value("${egov.usr.events.create.topic}")
 	private String saveUserEventsTopic;
