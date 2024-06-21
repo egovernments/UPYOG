@@ -276,6 +276,15 @@ public class WaterServicesUtil {
 	 * @return true if state updatable is true else false
 	 */
 	public boolean getStatusForUpdate(BusinessService businessService, String applicationStatus) {
+		if (workflowService == null) {
+			throw new IllegalStateException("workflowService is not initialized");
+		}
+		if (businessService == null) {
+			throw new IllegalArgumentException("businessService cannot be null");
+		}
+		if (applicationStatus == null) {
+			throw new IllegalArgumentException("applicationStatus cannot be null");
+		}
 		return workflowService.isStateUpdatable(applicationStatus, businessService);
 	}
 	/**
