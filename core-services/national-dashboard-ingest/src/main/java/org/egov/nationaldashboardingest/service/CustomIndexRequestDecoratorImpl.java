@@ -60,6 +60,10 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
 
             // Method for enriching information in base document structure
             ingestUtil.enrichMetaDataInBaseDocumentStructureForDataIngest(baseDocumentStructure, ingestData);
+
+	    // Add the current timestamp to the base document structure
+            Long currentTimestamp = System.currentTimeMillis();
+            baseDocumentStructure.put("timestamp", currentTimestamp);
             
             log.info("Base structure - " + baseDocumentStructure.toString());
 
