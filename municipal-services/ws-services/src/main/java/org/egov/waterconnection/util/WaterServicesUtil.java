@@ -1,6 +1,7 @@
 package org.egov.waterconnection.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class WaterServicesUtil {
 
 	@Autowired
@@ -276,6 +278,8 @@ public class WaterServicesUtil {
 	 * @return true if state updatable is true else false
 	 */
 	public boolean getStatusForUpdate(BusinessService businessService, String applicationStatus) {
+		log.info("applicationStatus: {}", applicationStatus);
+		log.info("businessService: {}", businessService.toString());
 		if (workflowService == null) {
 			throw new IllegalStateException("workflowService is not initialized");
 		}
