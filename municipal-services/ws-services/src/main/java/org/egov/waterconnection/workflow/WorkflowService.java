@@ -94,6 +94,14 @@ public class WorkflowService {
 	 * @return State object to be fetched
 	 */
 	public Boolean isStateUpdatable(String stateCode, BusinessService businessService) {
+		if (businessService == null) {
+			throw new IllegalArgumentException("businessService cannot be null");
+		}
+
+		List<State> states = businessService.getStates();
+		if (states == null) {
+			throw new IllegalStateException("businessService states cannot be null");
+		}
 		for (State state : businessService.getStates()) {
 			if (state.getApplicationStatus() != null && state.getApplicationStatus().equalsIgnoreCase(stateCode))
 				return state.getIsStateUpdatable();
