@@ -173,6 +173,10 @@ import {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
+  DashboardIcon,
+  DocumentRect,
+  HelpOutlineIcon,
+  NoResultsFoundIcon,
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -225,6 +229,11 @@ import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 
 import CitizenConsentForm from "./atoms/CitizenConsentForm";
+
+import { FormComposerV2 } from "./hoc/FormComposerV2";
+import Help from "./hoc/Tutorial/Help";
+import InboxSearchComposer from "./hoc/InboxSearchComposer";
+import InputTextAmount from "./atoms/InputTextAmount";
 
 export {
   Phone,
@@ -458,5 +467,13 @@ export {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
-  CitizenConsentForm
+  CitizenConsentForm,
+  DashboardIcon,
+  DocumentRect,
+  FormComposerV2,
+  Help,
+  InboxSearchComposer,
+  InputTextAmount,
+  HelpOutlineIcon,
+  NoResultsFoundIcon
 };

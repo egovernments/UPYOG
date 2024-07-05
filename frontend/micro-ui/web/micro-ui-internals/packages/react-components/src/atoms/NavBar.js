@@ -25,9 +25,9 @@ import {
   LogoutIcon,
   EditPencilIcon,
   LanguageIcon,
-  LoginIcon
+  LoginIcon,
 } from "./svgindex";
-import { BirthIcon, DeathIcon, FirenocIcon } from "..";
+import { BirthIcon, DeathIcon, FirenocIcon, DashboardIcon } from "..";
 
 const IconsObject = {
   CommonPTIcon: <PTIcon className="icon" />,
@@ -61,7 +61,8 @@ const IconsObject = {
   LogoutIcon: <LogoutIcon className="icon" />,
   Phone: <Phone className="icon" />,
   LanguageIcon: <LanguageIcon className="icon" />,
-  LoginIcon: <LoginIcon className="icon" />
+  LoginIcon: <LoginIcon className="icon" />,
+  DashboardIcon: <DashboardIcon className="icon"/>
 };
 const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, isEmployee, search, setSearch,isSideBarScroll }) => {
   const node = useRef();

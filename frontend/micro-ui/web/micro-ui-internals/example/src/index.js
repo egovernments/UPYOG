@@ -23,6 +23,7 @@ import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
+// import { initTQMComponents } from '@egovernments/digit-ui-module-tqm'
 
 // import {initCustomisationComponents} from "./customisations";
 
@@ -60,7 +61,8 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death"
+  "Death",
+  // "Tqm"
 ];
 
 const initTokens = (stateCode) => {
@@ -122,6 +124,8 @@ const initDigitUI = () => {
   initWSComponents();
   initCommonPTComponents();
   initBillsComponents();
+  //calling it here so that UICustomizations inside tqm gets added after the common Customizations are added
+  // initTQMComponents();
 
   // initCustomisationComponents();
 

@@ -37,6 +37,7 @@ import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
+// import { initTQMComponents } from "@egovernments/digit-ui-module-tqm";
 
 initLibraries();
 
@@ -64,6 +65,7 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
+  // "Tqm"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -95,6 +97,8 @@ initCommonPTComponents();
 initBillsComponents();
 // initReportsComponents();
 // initCustomisationComponents();
+//calling it here so that UICustomizations inside tqm gets added after the common Customizations are added
+// initTQMComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),
