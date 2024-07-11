@@ -201,7 +201,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   const AddDriver = Digit.ComponentRegistryService.getComponent("AddDriver");
   const EditDriver = Digit.ComponentRegistryService.getComponent("EditDriver");
   const BreadCrumbComp = Digit.ComponentRegistryService.getComponent("FsmBreadCrumb");
-
+  
   const locationCheck =
     window.location.href.includes("/employee/fsm/inbox") ||
     window.location.href.includes("/employee/fsm/registry") ||
