@@ -149,7 +149,8 @@ const FSMCard = () => {
       }
     : {
         Icon: <ShippingTruck />,
-        moduleName: t("ES_TITLE_FAECAL_SLUDGE_MGMT"),
+        moduleName: t("CARD RENAMED"),
+        // moduleName: t("ES_TITLE_FAECAL_SLUDGE_MGMT"),
         kpis: [
           {
             count: total,
