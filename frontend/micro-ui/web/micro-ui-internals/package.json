@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "run-s build start:dev",
-    "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
+    "sprint": "run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
     "dev:css": "cd packages/css && yarn start",
