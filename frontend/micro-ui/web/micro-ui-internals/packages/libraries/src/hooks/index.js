@@ -88,6 +88,7 @@ import useDriverUpdate from "./fsm/useDriverUpdate";
 import useDriverDetails from "./fsm/useDriverDetails";
 import useVendorSearch from "./fsm/useVendorSearch";
 import useAdvanceBalanceCalulation from "./fsm/useAdvanceBalanceCalculation";
+import useWorkerSearch from "./fsm/useWorkerSearch";
 
 import useEmployeeSearch from "./useEmployeeSearch";
 
@@ -334,6 +335,7 @@ const fsm = {
   useVehicleTripCreate,
   useVendorSearch,
   useAdvanceBalanceCalulation,
+  useWorkerSearch
 };
 const ptr = {
   usePetMDMS,
