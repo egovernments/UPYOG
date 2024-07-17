@@ -66,11 +66,8 @@ public class DriverUserService {
 		User driverInfo = driver.getOwner();
 		HashMap<String, String> errorMap = new HashMap<>();
 
-		UserDetailResponse userDetailResponse = null;
-
 		if (driverInfo != null && driverInfo.getMobileNumber() != null) {
 			driverInfoMobileNumber(driverInfo, requestInfo, errorMap, driver, driverRequest, isCreateOrUpdate);
-
 		} else {
 			log.debug("MobileNo is not provided in Application.");
 			errorMap.put(VendorErrorConstants.INVALID_DRIVER_ERROR,
@@ -81,19 +78,17 @@ public class DriverUserService {
 			throw new CustomException(errorMap);
 		}
 		licenseExistCheck(driverRequest);
+
 	}
 
 	private void licenseExistCheck(DriverRequest driverRequest) {
 		DriverResponse driverResponse = driverRepository.getDriverData(new DriverSearchCriteria());
-		
-		Optional<Driver> driver = Optional.ofNullable(driverResponse)
-		        .map(DriverResponse::getDriver)
-		        .orElse(Collections.emptyList())
-		        .stream()
-		        .filter(driverIdAndLicenseNumCheck ->
-		                driverIdAndLicenseNumCheck.getLicenseNumber().equalsIgnoreCase(driverRequest.getDriver().getLicenseNumber())
-		                && !driverIdAndLicenseNumCheck.getId().equalsIgnoreCase(driverRequest.getDriver().getId()))
-		        .findFirst();
+
+		Optional<Driver> driver = driverResponse.getDriver().stream()
+				.filter(driverIdAndLicenseNumCheck -> driverIdAndLicenseNumCheck.getLicenseNumber()
+						.equalsIgnoreCase(driverRequest.getDriver().getLicenseNumber())
+						&& !driverIdAndLicenseNumCheck.getId().equalsIgnoreCase(driverRequest.getDriver().getId()))
+				.findFirst();
 
 		if (driver.isPresent()) {
 			throw new CustomException("Invalid LicenseNumber", " Driver with the same license number already exist");
@@ -147,6 +142,7 @@ public class DriverUserService {
 			updateUserDetails(driverInfo, requestInfo, errorMap);
 			driverRequest.getDriver().setOwner(driverRequest.getDriver().getOwner());
 		}
+
 	}
 
 	private User updateUserDetails(User driverInfo, RequestInfo requestInfo, HashMap<String, String> errorMap) {
@@ -239,7 +235,7 @@ public class DriverUserService {
 	/**
 	 * create Employee in HRMS for Vendor owner
 	 * 
-	 * @param driver
+	 * @param owner
 	 * @param requestInfo
 	 * @return
 	 */

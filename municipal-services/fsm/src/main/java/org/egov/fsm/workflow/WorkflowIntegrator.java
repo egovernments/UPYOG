@@ -91,7 +91,7 @@ public class WorkflowIntegrator {
 		obj.put(TENANTIDKEY, wfTenantId);
 
 		Double tripAmount = getAdditionalDetails(fsm.getAdditionalDetails());
-		
+
 		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())) {
 			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_POST_PAY_BUSINESSSERVICE);
 		} else if (FSMConstants.FSM_PAYMENT_PREFERENCE_PRE_PAY
@@ -196,6 +196,5 @@ public class WorkflowIntegrator {
 
 		return tripAmount;
 	}
-
 
 }
