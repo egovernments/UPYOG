@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header } from "@upyog/digit-ui-react-components";
-import { FormComposerV2 } from "../../../../../../../react-components/src";
+import { FormComposer, Toast, Header, FormComposerV2 } from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import WorkerConfig from "../../configs/WorkerConfig";
 import { useQueryClient } from "react-query";
@@ -18,9 +17,7 @@ const AddWorker = ({ parentUrl, heading }) => {
   const [Config, setConfig] = useState(WorkerConfig({ t }));
   const [skillsOption, setSkillsOption] = useState([]);
   const [employer, setEmployer] = useState([]);
-  const { isLoading: isLoading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate } = Digit.Hooks.fsm.useWorkerCreate(
-    tenantId
-  );
+  const { isLoading: isLoading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate } = Digit.Hooks.fsm.useWorkerCreate(tenantId);
   const {
     isLoading: isVendorUpdateLoading,
     isError: isvendorUpdateError,
@@ -29,13 +26,9 @@ const AddWorker = ({ parentUrl, heading }) => {
     mutate: vendorMutate,
   } = Digit.Hooks.fsm.useVendorUpdate(tenantId);
 
-  const {
-    isLoading: isPlantUserLoading,
-    isError: isPlantUserError,
-    data: plantUserResponse,
-    error: PlantUserError,
-    mutate: PlantUserMutate,
-  } = Digit.Hooks.fsm.usePlantUserCreate(tenantId);
+  const { isLoading: isPlantUserLoading, isError: isPlantUserError, data: plantUserResponse, error: PlantUserError, mutate: PlantUserMutate } = Digit.Hooks.fsm.usePlantUserCreate(
+    tenantId
+  );
 
   const { isLoading: ismdms, data: mdmsOptions } = Digit.Hooks.useCustomMDMS(
     stateId,
@@ -137,9 +130,7 @@ const AddWorker = ({ parentUrl, heading }) => {
       restructuredData.push(restructuredItem);
     });
 
-    const driverLicenses = roleDetails
-      ?.filter((entry) => entry.fn_role && entry.fn_role.code === "DRIVER" && entry.licenseNo)
-      .map((entry) => entry.licenseNo);
+    const driverLicenses = roleDetails?.filter((entry) => entry.fn_role && entry.fn_role.code === "DRIVER" && entry.licenseNo).map((entry) => entry.licenseNo);
     const roleDetailsArray = [];
 
     roleDetails?.forEach((item, index) => {
