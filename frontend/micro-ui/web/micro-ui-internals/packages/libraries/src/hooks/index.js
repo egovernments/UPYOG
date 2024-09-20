@@ -49,7 +49,7 @@ import usePGRTenants from "./pgr/useTenants";
 import usePGRMDMS from "./pgr/useMDMS";
 import useComplaintSubType from "./pgr/useComplaintSubType";
 import useComplaintStatusCount from "./pgr/useComplaintStatusWithCount";
-import useWorkerSearch from "./fsm/useWorkerSearch";
+// import useWorkerSearch from "./fsm/useWorkerSearch";
 
 import useTenantsFSM from "./fsm/useTenants";
 import useDesludging from "./fsm/useDesludging";
@@ -221,7 +221,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
-import useBulkSearchWS from "./ws/useBulkSearchWS"
+import useBulkSearchWS from "./ws/useBulkSearchWS";
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -273,7 +273,6 @@ import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
 import useTenantsPTR from "./ptr/useTenants";
 
-
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
 const pgr = {
@@ -294,7 +293,6 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
-
 
 const fsm = {
   useTenants: useTenantsFSM,
@@ -335,7 +333,6 @@ const fsm = {
   useVehicleTripCreate,
   useVendorSearch,
   useAdvanceBalanceCalulation,
-  useWorkerSearch
 };
 const ptr = {
   usePetMDMS,
@@ -350,8 +347,7 @@ const ptr = {
   useServiceSearchPTR,
   usePetDocumentSearch,
   useMyPetPayments,
-  useTenants: useTenantsPTR
- 
+  useTenants: useTenantsPTR,
 };
 
 const pt = {
@@ -483,12 +479,12 @@ const survey = {
   useSubmitResponse: useSurveySubmitResponse,
   useShowResults: useSurveyShowResults,
   useSurveyInbox,
-  useServeyCreateDef:useServeyCreateDef,
-  useCfdefinitionsearch:useCfdefinitionsearch,
-  useSubmitSurveyResponse:useSubmitSurveyResponse,
-  useSelectedSurveySearch:useSelectedSurveySearch,
-  useCfdefinitionsearchresult:useCfdefinitionsearchresult,
-  useUpdateSurvey:useUpdateSurvey,
+  useServeyCreateDef: useServeyCreateDef,
+  useCfdefinitionsearch: useCfdefinitionsearch,
+  useSubmitSurveyResponse: useSubmitSurveyResponse,
+  useSelectedSurveySearch: useSelectedSurveySearch,
+  useCfdefinitionsearchresult: useCfdefinitionsearchresult,
+  useUpdateSurvey: useUpdateSurvey,
 };
 
 const noc = {
@@ -607,7 +603,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
-  createTokenAPI
+  createTokenAPI,
 };
 
 export default Hooks;
