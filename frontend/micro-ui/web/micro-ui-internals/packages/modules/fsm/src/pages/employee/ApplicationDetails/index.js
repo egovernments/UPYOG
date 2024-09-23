@@ -1,263 +1,465 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, InfoIcon } from "@egovernments/digit-ui-react-components";
-import { useParams, useHistory, useLocation } from "react-router-dom";
 
-import RegisryInbox from "../../../components/RegistryInbox";
+import {
+  BreakLine,
+  Card,
+  CardSubHeader,
+  StatusTable,
+  Row,
+  SubmitBar,
+  Loader,
+  CardSectionHeader,
+  ConnectingCheckPoints,
+  CheckPoint,
+  ActionBar,
+  Menu,
+  LinkButton,
+  Toast,
+  Rating,
+  ActionLinks,
+  Header,
+  ImageViewer,
+  MultiLink,
+} from "@upyog/digit-ui-react-components";
 
-const FSMRegistry = () => {
-  const { t } = useTranslation();
+import ActionModal from "./Modal";
+import TLCaption from "../../../components/TLCaption";
+
+import { useQueryClient } from "react-query";
+
+import { Link, useHistory, useParams } from "react-router-dom";
+import { ViewImages } from "../../../components/ViewImages";
+import getPDFData from "../../../getPDFData";
+
+const ApplicationDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [searchParams, setSearchParams] = useState({});
-  const [sortParams, setSortParams] = useState([{ id: "createdTime", desc: true }]);
-  const [pageOffset, setPageOffset] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [tab, setTab] = useState("VENDOR");
-  const [vehicleIds, setVehicleIds] = useState("");
-  const [driverIds, setDriverIds] = useState("");
-  const [tableData, setTableData] = useState([]);
+  const state = Digit.ULBService.getStateId();
+  const { t } = useTranslation();
   const history = useHistory();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const selectedTabs = queryParams.get("selectedTabs");
-  const [loaded, setLoaded] = useState(false);
+  const queryClient = useQueryClient();
+  let { id: applicationNumber } = useParams();
+  const [displayMenu, setDisplayMenu] = useState(false);
+  const [selectedAction, setSelectedAction] = useState(null);
+  const [config, setCurrentConfig] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [showToast, setShowToast] = useState(null);
+  const [imageZoom, setImageZoom] = useState(null);
+  const [showAllTimeline, setShowAllTimeline] = useState(false);
+  const [viewTimeline, setViewTimeline] = useState(false);
+  const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
+  const [showOptions, setShowOptions] = useState(false);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
 
-  const userInfo = Digit.UserService.getUser();
+  const { tenants } = storeData || {};
 
-  let paginationParms = { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
-  const { data: dsoData, isLoading: isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } =
-    selectedTabs === "VEHICLE"
-      ? Digit.Hooks.fsm.useVehiclesSearch({
-          tenantId,
-          filters: {
-            ...paginationParms,
-            registrationNumber: searchParams?.registrationNumber,
-            status: "ACTIVE,DISABLED",
-          },
-          config: { enabled: false },
-        })
-      : selectedTabs === "DRIVER"
-      ? Digit.Hooks.fsm.useDriverSearch({
-          tenantId,
-          filters: {
-            ...paginationParms,
-            name: searchParams?.name,
-            status: "ACTIVE,DISABLED",
-          },
-          config: { enabled: false },
-        })
-      : Digit.Hooks.fsm.useVendorSearch({
-          tenantId,
-          filters: {
-            ...paginationParms,
-            name: searchParams?.name,
-            status: "ACTIVE,DISABLED",
-          },
-          config: { enabled: false },
-        });
+  const { data: paymentsHistory } = Digit.Hooks.fsm.usePaymentHistory(tenantId, applicationNumber);
+
+  const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.fsm.useApplicationDetail(
+    t,
+    tenantId,
+    applicationNumber,
+    {},
+    "EMPLOYEE"
+  );
+  const { isLoading: isDataLoading, isSuccess, data: applicationData } = Digit.Hooks.fsm.useSearch(
+    tenantId,
+    { applicationNos: applicationNumber },
+    { staleTime: Infinity }
+  );
 
   const {
-    data: vendorData,
-    isLoading: isVendorLoading,
-    isSuccess: isVendorSuccess,
-    error: vendorError,
-    refetch: refetchVendor,
-  } = Digit.Hooks.fsm.useDsoSearch(
-    tenantId,
-    {
-      vehicleIds: vehicleIds,
-      driverIds: driverIds,
-      // status: "ACTIVE",
-    },
-    { enabled: false }
-  );
-  const inboxTotalCount = dsoData?.totalCount || 50;
+    isLoading: updatingApplication,
+    isError: updateApplicationError,
+    data: updateResponse,
+    error: updateError,
+    mutate,
+  } = Digit.Hooks.fsm.useApplicationActions(tenantId);
+
+  const workflowDetails = Digit.Hooks.useWorkflowDetails({
+    tenantId: applicationDetails?.tenantId || tenantId,
+    id: applicationNumber,
+    moduleCode:
+      applicationData?.paymentPreference === "POST_PAY"
+        ? "FSM_POST_PAY_SERVICE"
+        : applicationData?.advanceAmount === 0
+        ? "PAY_LATER_SERVICE"
+        : applicationData?.advanceAmount > 0
+        ? "FSM_ADVANCE_PAY_SERVICE"
+        : applicationData?.paymentPreference === null &&
+          applicationData?.additionalDetails?.tripAmount === 0 &&
+          applicationData?.advanceAmount === null
+        ? "FSM_ZERO_PAY_SERVICE"
+        : "FSM",
+    role: "FSM_EMPLOYEE",
+    serviceData: applicationDetails,
+    getTripData: true,
+  });
 
   useEffect(() => {
-    refetch();
-  }, []);
+    if (showToast) {
+      workflowDetails.revalidate();
+    }
+  }, [showToast]);
+
+  function onActionSelect(action) {
+    setSelectedAction(action);
+    setDisplayMenu(false);
+  }
 
   useEffect(() => {
-    setPageOffset(0);
-    refetch();
-  }, [searchParams]);
+    switch (selectedAction) {
+      case "SCHEDULE":
+      case "DSO_ACCEPT":
+      case "ACCEPT":
+      case "ASSIGN":
+      case "GENERATE_DEMAND":
+      case "FSM_GENERATE_DEMAND":
+      case "REASSIGN":
+      case "COMPLETE":
+      case "COMPLETED":
+      case "CANCEL":
+      case "SENDBACK":
+      case "DSO_REJECT":
+      case "REJECT":
+      case "DECLINE":
+      case "REASSING":
+      case "UPDATE":
+        return setShowModal(true);
+      case "SUBMIT":
+      case "FSM_SUBMIT":
+        // case !DSO && "SCHEDULE":
+        return history.push("/digit-ui/employee/fsm/modify-application/" + applicationNumber);
+      case "PAY":
+      case "FSM_PAY":
+      case "ADDITIONAL_PAY_REQUEST":
+        return history.push(`/digit-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}?workflow=FSM`);
+      default:
+        break;
+    }
+  }, [selectedAction]);
 
-  useEffect(() => {
-    refetch();
-  }, [searchParams, sortParams, pageOffset, pageSize]);
+  const closeModal = () => {
+    setSelectedAction(null);
+    setShowModal(false);
+  };
 
-  useEffect(() => {
-    if (dsoData?.vehicle && selectedTabs === "VEHICLE") {
-      let vehicleIds = "";
-      dsoData.vehicle.map((data) => {
-        vehicleIds += `${data.id},`;
+  const closeToast = () => {
+    setShowToast(null);
+  };
+
+  const handleViewTimeline = () => {
+    const timelineSection = document.getElementById("timeline");
+    if (timelineSection) {
+      timelineSection.scrollIntoView({ behavior: "smooth" });
+    }
+    setViewTimeline(true);
+  };
+  const submitAction = (data) => {
+    mutate(data, {
+      onError: (error, variables) => {
+        setShowToast({ key: "error", action: error });
+        setTimeout(closeToast, 5000);
+      },
+      onSuccess: (data, variables) => {
+        setShowToast({ key: "success", action: selectedAction });
+        setTimeout(closeToast, 5000);
+        queryClient.invalidateQueries("FSM_CITIZEN_SEARCH");
+        const inbox = queryClient.getQueryData("FUNCTION_RESET_INBOX");
+        inbox?.revalidate();
+      },
+    });
+    closeModal();
+  };
+
+  function zoomImageWrapper(imageSource, index) {
+    setImageZoom(imageSource);
+  }
+
+  function onCloseImageZoom() {
+    setImageZoom(null);
+  }
+
+  const getTimelineCaptions = (checkpoint) => {
+    const __comment = checkpoint?.comment?.split("~");
+    const reason = __comment ? __comment[0] : null;
+    const reason_comment = __comment ? __comment[1] : null;
+    if (checkpoint.status === "CREATED") {
+      const caption = {
+        date: checkpoint?.auditDetails?.created,
+        name: checkpoint?.assigner,
+        mobileNumber: applicationData?.citizen?.mobileNumber,
+        emailId: applicationData?.citizen?.emailId,
+        source: applicationData?.source || "",
+      };
+      return <TLCaption data={caption} />;
+    } else if (
+      checkpoint.status === "PENDING_APPL_FEE_PAYMENT" ||
+      checkpoint.status === "DSO_REJECTED" ||
+      checkpoint.status === "CANCELED" ||
+      checkpoint.status === "REJECTED"
+    ) {
+      const caption = {
+        date: checkpoint?.auditDetails?.created,
+        name: checkpoint?.assigner,
+        comment: reason ? t(`ES_ACTION_REASON_${reason}`) : null,
+        otherComment: reason_comment ? reason_comment : null,
+      };
+      return <TLCaption data={caption} />;
+    } else if (checkpoint.status === "DSO_INPROGRESS") {
+      const caption = {
+        name: checkpoint?.assigner,
+        mobileNumber: checkpoint?.assigner?.mobileNumber,
+        date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
+      };
+      return <TLCaption data={caption} />;
+    } else if (checkpoint.status === "COMPLETED") {
+      return (
+        <div>
+          <Rating withText={true} text={t(`ES_FSM_YOU_RATED`)} currentRating={checkpoint.rating} />
+          <Link to={`/digit-ui/employee/fsm/rate-view/${applicationNumber}`}>
+            <ActionLinks>{t("CS_FSM_RATE_VIEW")}</ActionLinks>
+          </Link>
+        </div>
+      );
+    } else if (
+      checkpoint.status === "WAITING_FOR_DISPOSAL" ||
+      checkpoint.status === "DISPOSAL_IN_PROGRESS" ||
+      checkpoint.status === "DISPOSED" ||
+      checkpoint.status === "CITIZEN_FEEDBACK_PENDING"
+    ) {
+      const caption = {
+        date: checkpoint?.auditDetails?.created,
+        name: checkpoint?.assigner,
+        mobileNumber: checkpoint?.assigner?.mobileNumber,
+      };
+      if (checkpoint?.numberOfTrips) caption.comment = `${t("NUMBER_OF_TRIPS")}: ${checkpoint?.numberOfTrips}`;
+      return <TLCaption data={caption} />;
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    const tenantInfo = tenants.find((tenant) => tenant.code === applicationDetails?.tenantId);
+    const data = getPDFData({ ...applicationDetails?.applicationDetailsResponse }, tenantInfo, t);
+    Digit.Utils.pdf.generate(data);
+    setShowOptions(false);
+  };
+
+  const downloadPaymentReceipt = async () => {
+    const receiptFile = {
+      filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId],
+    };
+
+    if (!receiptFile?.fileStoreIds?.[0]) {
+      const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[0]] }, "fsm-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(state, {
+        fileStoreIds: newResponse.filestoreIds[0],
       });
-      setVehicleIds(vehicleIds);
-      setTableData(dsoData?.vehicle);
-    }
-    if (dsoData?.driver && selectedTabs === "DRIVER") {
-      let driverIds = "";
-      dsoData.driver.map((data) => {
-        driverIds += `${data.id},`;
+      window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
+      setShowOptions(false);
+    } else {
+      const fileStore = await Digit.PaymentService.printReciept(state, {
+        fileStoreIds: receiptFile.filestoreIds[0],
       });
-      setDriverIds(driverIds);
-      setTableData(dsoData?.driver);
+      window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
+      setShowOptions(false);
     }
-    if (dsoData?.vendor && selectedTabs === "VENDOR") {
-      const tableData = dsoData.vendor.map((dso) => ({
-        mobileNumber: dso.owner?.mobileNumber,
-        name: dso.name,
-        id: dso.id,
-        auditDetails: dso.auditDetails,
-        drivers: dso.drivers,
-        activeDrivers: dso.drivers?.filter((driver) => driver.status === "ACTIVE"),
-        allVehicles: dso.vehicles,
-        dsoDetails: dso,
-        vehicles: dso.vehicles
-          ?.filter((vehicle) => vehicle.status === "ACTIVE")
-          ?.map((vehicle) => ({
-            id: vehicle.id,
-            registrationNumber: vehicle?.registrationNumber,
-            type: vehicle.type,
-            i18nKey: `FSM_VEHICLE_TYPE_${vehicle.type}`,
-            capacity: vehicle.tankCapacity,
-            suctionType: vehicle.suctionType,
-            model: vehicle.model,
-          })),
-      }));
-      setTableData(tableData);
-    }
-  }, [dsoData]);
-
-  useEffect(() => {
-    if (vehicleIds !== "" || driverIds !== "") refetchVendor();
-  }, [vehicleIds, driverIds]);
-
-  useEffect(() => {
-    if (vendorData) {
-      if (selectedTabs === "VEHICLE") {
-        const vehicles = dsoData?.vehicle.map((data) => {
-          let vendor = vendorData.find((ele) => ele.dsoDetails?.vehicles?.find((vehicle) => vehicle.id === data.id));
-          if (vendor) {
-            data.vendor = vendor.dsoDetails;
-          }
-          return data;
-        });
-        setTableData(vehicles);
-        setVehicleIds("");
-      }
-      if (selectedTabs === "DRIVER") {
-        const drivers = dsoData?.driver.map((data) => {
-          let vendor = vendorData.find((ele) => ele.dsoDetails?.drivers?.find((driver) => driver.id === data.id));
-          if (vendor) {
-            data.vendor = vendor.dsoDetails;
-          }
-          return data;
-        });
-        setTableData(drivers);
-        setDriverIds("");
-      }
-    }
-  }, [vendorData, dsoData]);
-
-  const onSearch = (params = {}) => {
-    setSearchParams({ ...params });
   };
+  const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false);
 
-  const fetchNextPage = () => {
-    setPageOffset((prevState) => prevState + pageSize);
-  };
-
-  const fetchPrevPage = () => {
-    setPageOffset((prevState) => prevState - pageSize);
-  };
-
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
-  };
-
-  const handleFilterChange = () => {};
-
-  let searchFields =
-    selectedTabs === "VEHICLE"
+  let dowloadOptions =
+    paymentsHistory?.Payments?.length > 0
       ? [
           {
-            label: t("ES_FSM_REGISTRY_SEARCH_VEHICLE_NUMBER"),
-            name: "registrationNumber",
-            labelChildren: (
-              <div className="tooltip" style={{ paddingLeft: "10px", marginBottom: "-3px" }}>
-                <InfoIcon />
-                <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize: "14px" }}>
-                  {t("ES_FSM_VEHICLE_FORMAT_TIP")}
-                </span>
-              </div>
-            ),
+            label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
+            onClick: handleDownloadPdf,
           },
-        ]
-      : selectedTabs === "DRIVER"
-      ? [
           {
-            label: t("ES_FSM_REGISTRY_SEARCH_DRIVER_NAME"),
-            name: "name",
+            label: t("CS_DOWNLOAD_RECEIPT"),
+            onClick: downloadPaymentReceipt,
           },
         ]
       : [
           {
-            label: t("ES_FSM_REGISTRY_SEARCH_VENDOR_NAME"),
-            name: "name",
+            label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
+            onClick: handleDownloadPdf,
           },
         ];
-  const handleSort = useCallback((args) => {
-    if (args?.length === 0) return;
-    setSortParams(args);
-  }, []);
 
-  const onTabChange = (tab) => {
-    setTab(tab);
-    if (selectedTabs !== tab) {
-      history.push(`/digit-ui/employee/fsm/registry?selectedTabs=${tab}`);
-    }
+  if (isLoading) {
+    return <Loader />;
+  }
+  const toggleTimeline = () => {
+    setShowAllTimeline((prev) => !prev);
   };
 
-  const refetchData = () => {
-    refetch();
-  };
-
-  const refetchVendorData = () => {
-    refetchVendor();
-  };
-
-  useEffect(() => {
-    refetch();
-    refetchVendor();
-  }, []);
+  // let deepCopy = _.cloneDeep(workflowDetails)
+  // let index1 = 0
+  // deepCopy?.data?.timeline.map((check,index) => {
+  //   if (check.status == "ASSING_DSO" && index1 ==0)
+  //   {
+  //       let obj= check
+  //       obj.status = "PENDING_PAYYY"
+  //       index1 +=1
+  //       workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
+  //       workflowDetails.data.timeline.splice(index, 0, obj);
+  //   }
+  // })
 
   return (
-    <div>
-      <Header>{t("ES_FSM_REGISTRY")}</Header>
-      <RegisryInbox
-        data={{ table: tableData }}
-        isLoading={isLoading || isVendorLoading}
-        onSort={handleSort}
-        disableSort={false}
-        sortParams={sortParams}
-        userRole={"FSM_ADMIN"}
-        onFilterChange={handleFilterChange}
-        searchFields={searchFields}
-        onSearch={onSearch}
-        onNextPage={fetchNextPage}
-        onPrevPage={fetchPrevPage}
-        currentPage={Math.floor(pageOffset / pageSize)}
-        pageSizeLimit={pageSize}
-        onPageSizeChange={handlePageSizeChange}
-        totalRecords={inboxTotalCount || 0}
-        onTabChange={onTabChange}
-        selectedTab={selectedTabs}
-        refetchData={refetchData}
-        refetchVendor={refetchVendorData}
-      />
-    </div>
+    <React.Fragment>
+      {!isLoading ? (
+        <React.Fragment>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Header style={{ marginBottom: "16px" }}>{t("ES_TITLE_APPLICATION_DETAILS")}</Header>
+            <LinkButton label={t("VIEW_TIMELINE")} style={{ color: "#A52A2A" }} onClick={handleViewTimeline}></LinkButton>
+          </div>
+          <Card className="fsm" style={{ position: "relative" }}>
+            {/* {!DSO && (
+              <LinkButton
+                label={<span style={{ color: "#f47738", marginLeft: "8px" }}>{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
+                style={{ position: "absolute", top: 0, right: 20 }}
+                onClick={() => {
+                  history.push(props.parentRoute + "/application-audit/" + applicationNumber);
+                }}
+              />
+            )} */}
+            {applicationDetails?.applicationDetails.map((detail, index) => (
+              <React.Fragment key={index}>
+                {index === 0 ? null : ( // <CardSubHeader style={{ marginBottom: "16px" }}>{t(detail.title)}</CardSubHeader>
+                  <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t(detail.title)}</CardSectionHeader>
+                )}
+                <StatusTable>
+                  {detail?.values?.map((value, index) => {
+                    if (value === null) return;
+                    if (value.map === true && value.value !== "N/A") {
+                      return <Row key={t(value.title)} label={t(value.title)} text={<img src={t(value.value)} alt="" />} />;
+                    }
+                    return (
+                      <Row
+                        key={t(value.title)}
+                        label={t(value.title)}
+                        text={t(value.value) || "N/A"}
+                        last={index === detail?.values?.length - 1}
+                        caption={value.caption}
+                        className="border-none"
+                      />
+                    );
+                  })}
+                </StatusTable>
+              </React.Fragment>
+            ))}
+            {applicationData?.pitDetail?.additionalDetails?.fileStoreId?.CITIZEN?.length && (
+              <>
+                <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t("ES_FSM_SUB_HEADING_CITIZEN_UPLOADS")}</CardSectionHeader>
+                <ViewImages
+                  fileStoreIds={applicationData?.pitDetail?.additionalDetails?.fileStoreId?.CITIZEN}
+                  tenantId={state}
+                  onClick={(source, index) => zoomImageWrapper(source, index)}
+                />
+              </>
+            )}
+            {applicationData?.pitDetail?.additionalDetails?.fileStoreId?.FSM_DSO?.length && (
+              <>
+                <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t("ES_FSM_SUB_HEADING_DSO_UPLOADS")}</CardSectionHeader>
+                <ViewImages
+                  fileStoreIds={applicationData?.pitDetail?.additionalDetails?.fileStoreId?.FSM_DSO}
+                  tenantId={tenantId}
+                  onClick={(source, index) => zoomImageWrapper(source, index)}
+                />
+              </>
+            )}
+            {imageZoom ? <ImageViewer imageSrc={imageZoom} onClose={onCloseImageZoom} /> : null}
+
+            <BreakLine />
+            {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
+            {!workflowDetails?.isLoading && !isDataLoading && (
+              <Fragment>
+                <div id="timeline">
+                  <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+                    {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
+                  </CardSectionHeader>
+                  {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
+                    <CheckPoint
+                      isCompleted={true}
+                      label={t("CS_COMMON_" + workflowDetails?.data?.timeline[0]?.status)}
+                      customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
+                    />
+                  ) : (
+                    <ConnectingCheckPoints>
+                      {workflowDetails?.data?.timeline &&
+                        workflowDetails?.data?.timeline
+                          .slice(0, showAllTimeline ? workflowDetails.data.timeline.length : 2)
+                          .map((checkpoint, index, arr) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <CheckPoint
+                                  keyValue={index}
+                                  isCompleted={index === 0}
+                                  label={t("CS_COMMON_FSM_" + `${checkpoint.performedAction === "UPDATE" ? "UPDATE_" : ""}` + checkpoint.status)}
+                                  customChild={getTimelineCaptions(checkpoint)}
+                                />
+                              </React.Fragment>
+                            );
+                          })}
+                    </ConnectingCheckPoints>
+                  )}
+                  {workflowDetails?.data?.timeline?.length > 2 && (
+                    <LinkButton label={showAllTimeline ? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}></LinkButton>
+                  )}
+                </div>
+              </Fragment>
+            )}
+          </Card>
+          {showModal ? (
+            <ActionModal
+              t={t}
+              action={selectedAction}
+              tenantId={tenantId}
+              state={state}
+              id={applicationNumber}
+              closeModal={closeModal}
+              submitAction={submitAction}
+              actionData={workflowDetails?.data?.timeline}
+              module={workflowDetails?.data?.applicationBusinessService}
+            />
+          ) : null}
+          {showToast && (
+            <Toast
+              error={showToast.key === "error" ? true : false}
+              label={t(showToast.key === "success" ? `ES_FSM_${showToast.action}_UPDATE_SUCCESS` : showToast.action)}
+              onClose={closeToast}
+            />
+          )}
+          {!workflowDetails?.isLoading &&
+            workflowDetails?.data?.nextActions?.length === 1 &&
+            workflowDetails?.data?.nextActions?.[0]?.action !== "RATE" && (
+              <ActionBar style={{ zIndex: "19" }}>
+                <SubmitBar
+                  label={t(`ES_FSM_${workflowDetails?.data?.nextActions[0].action}`)}
+                  onSubmit={() => onActionSelect(workflowDetails?.data?.nextActions[0].action)}
+                />
+              </ActionBar>
+            )}
+          {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && (
+            <ActionBar style={{ zIndex: "19" }}>
+              {displayMenu && workflowDetails?.data?.nextActions ? (
+                <Menu
+                  localeKeyPrefix={"ES_FSM"}
+                  options={workflowDetails?.data?.nextActions.map((action) => action.action)}
+                  t={t}
+                  onSelect={onActionSelect}
+                />
+              ) : null}
+              <SubmitBar label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+            </ActionBar>
+          )}
+        </React.Fragment>
+      ) : (
+        <Loader />
+      )}
+    </React.Fragment>
   );
 };
 
-export default FSMRegistry;
+export default ApplicationDetails;

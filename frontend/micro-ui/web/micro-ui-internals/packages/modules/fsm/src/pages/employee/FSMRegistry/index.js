@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, InfoIcon } from "@egovernments/digit-ui-react-components";
+import { Header, InfoIcon } from "@upyog/digit-ui-react-components";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 
 import RegisryInbox from "../../../components/RegistryInbox";
@@ -12,7 +12,13 @@ function cleanObject(obj) {
         if (obj[key].length === 0) {
           delete obj[key];
         }
-      } else if (obj[key] === undefined || obj[key] === null || obj[key] === false || obj[key] === '' || (typeof obj[key] === 'object' && Object.keys(obj[key]).length === 0)) {
+      } else if (
+        obj[key] === undefined ||
+        obj[key] === null ||
+        obj[key] === false ||
+        obj[key] === "" ||
+        (typeof obj[key] === "object" && Object.keys(obj[key]).length === 0)
+      ) {
         delete obj[key];
       }
     }
@@ -72,9 +78,9 @@ const FSMRegistry = () => {
           tenantId,
           details: {
             Individual: {
-              roleCodes:["SANITATION_WORKER"],
+              roleCodes: ["SANITATION_WORKER"],
               ...searchParams,
-              tenantId
+              tenantId,
             },
           },
           params: {
@@ -93,7 +99,13 @@ const FSMRegistry = () => {
           config: { enabled: false },
         });
 
-  const { data: vendorData, isLoading: isVendorLoading, isSuccess: isVendorSuccess, error: vendorError, refetch: refetchVendor } = Digit.Hooks.fsm.useDsoSearch(
+  const {
+    data: vendorData,
+    isLoading: isVendorLoading,
+    isSuccess: isVendorSuccess,
+    error: vendorError,
+    refetch: refetchVendor,
+  } = Digit.Hooks.fsm.useDsoSearch(
     tenantId,
     {
       vehicleIds: vehicleIds,
@@ -103,8 +115,8 @@ const FSMRegistry = () => {
     { enabled: false },
     t
   );
-  
-  const inboxTotalCount = dsoData?.TotalCount || dsoData?.totalCount ;
+
+  const inboxTotalCount = dsoData?.TotalCount || dsoData?.totalCount;
 
   useEffect(() => {
     refetch();
@@ -205,8 +217,8 @@ const FSMRegistry = () => {
           let vendor = vendorData.find((ele) => ele.dsoDetails?.workers?.find((driver) => driver.individualId === data.id));
           if (vendor) {
             data.vendor = vendor.dsoDetails;
-          }else{
-            data.vendor = null
+          } else {
+            data.vendor = null;
           }
           return data;
         });
@@ -217,7 +229,7 @@ const FSMRegistry = () => {
   }, [vendorData, dsoData]);
 
   const onSearch = (params = {}) => {
-    cleanObject(params)
+    cleanObject(params);
     setSearchParams({ ...params });
   };
 
