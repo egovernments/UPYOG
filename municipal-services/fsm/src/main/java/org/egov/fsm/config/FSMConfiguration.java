@@ -280,18 +280,22 @@ public class FSMConfiguration {
 		
 		@Value("${persister.update.fsm.vehicle.trip.details.topic}")
 		private String vehicleUpdateTripToInactive;
-		
+
 		@Value("${is.external.workflow.enabled}")
 		private Boolean isExternalWorkFlowEnabled;
-		
+
 		// FSM Event topic
 		@Value("${fsm.event.kafka.topic}")
 		private String fsmEventTopic;
 
-	@Value("${persister.create.fsm.worker.topic}")
-	private String createFsmWorkerTopic;
+		@Value("${persister.create.fsm.worker.topic}")
+		private String createFsmWorkerTopic;
 
-	@Value("${persister.update.fsm.worker.topic}")
-	private String updateFsmWorkerTopic;
+		@Value("${persister.update.fsm.worker.topic}")
+		private String updateFsmWorkerTopic;
+
+		// inbox Config
+		@Value("${fsm.event.index.kafka.topic}")
+		private String fsmEventIndexKafkaTopic;
 
 }
