@@ -45,8 +45,8 @@ public class InboxController {
 	@Autowired
 	private ElasticSearchService elasticSearchService;
 
-	@Autowired
-	private InboxQueryBuilder inboxQueryBuilder;
+//	@Autowired
+//	private InboxQueryBuilder inboxQueryBuilder;
 	
 	
 	@PostMapping(value = "/_search")
