@@ -1,5 +1,16 @@
 package org.egov.inbox.service;
 
+import static java.util.Objects.isNull;
+import static org.egov.inbox.util.BSConstants.ASSIGNEE_PARAM;
+import static org.egov.inbox.util.BSConstants.BS_APPLICATION_NUMBER_PARAM;
+import static org.egov.inbox.util.BSConstants.BS_BUSINESS_SERVICE_PARAM;
+import static org.egov.inbox.util.BSConstants.BS_CONSUMER_NO_PARAM;
+import static org.egov.inbox.util.BSConstants.BS_SW;
+import static org.egov.inbox.util.BSConstants.BS_SW_MODULENAME;
+import static org.egov.inbox.util.BSConstants.BS_SW_SERVICE;
+import static org.egov.inbox.util.BSConstants.BS_WS;
+import static org.egov.inbox.util.BSConstants.BS_WS_MODULENAME;
+import static org.egov.inbox.util.BSConstants.BS_WS_SERVICE;
 import static org.egov.inbox.util.BpaConstants.BPA;
 import static org.egov.inbox.util.BpaConstants.BPAREG;
 import static org.egov.inbox.util.BpaConstants.BPA_APPLICATION_NUMBER_PARAM;
@@ -8,7 +19,7 @@ import static org.egov.inbox.util.BpaConstants.MOBILE_NUMBER_PARAM;
 import static org.egov.inbox.util.BpaConstants.OFFSET_PARAM;
 import static org.egov.inbox.util.BpaConstants.STATUS_ID;
 import static org.egov.inbox.util.BpaConstants.STATUS_PARAM;
-import static org.egov.inbox.util.DSSConstants.*;
+import static org.egov.inbox.util.DSSConstants.ELASTICSEARCH_HIT_KEY;
 import static org.egov.inbox.util.FSMConstants.APPLICATIONSTATUS;
 import static org.egov.inbox.util.FSMConstants.CITIZEN_FEEDBACK_PENDING_STATE;
 import static org.egov.inbox.util.FSMConstants.COMPLETED_STATE;
@@ -23,23 +34,29 @@ import static org.egov.inbox.util.NocConstants.NOC;
 import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
+import static org.egov.inbox.util.PTRConstants.PTR;
+import static org.egov.inbox.util.SWConstants.SW;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
 import static org.egov.inbox.util.TLConstants.SEARCH_CRITERIA_PARAM;
 import static org.egov.inbox.util.TLConstants.TENANT_ID_PARAM;
 import static org.egov.inbox.util.TLConstants.TL;
-import static org.egov.inbox.util.SWConstants.SW;
-import static org.egov.inbox.util.BSConstants.*;
 import static org.egov.inbox.util.WSConstants.WS;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static java.util.Objects.isNull;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.collections4.MapUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -76,6 +93,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jayway.jsonpath.JsonPath;
@@ -99,6 +117,10 @@ public class InboxService {
 
     @Autowired
     private TLInboxFilterService tlInboxFilterService;
+    
+
+    @Autowired
+    private PtrInboxFilterService ptrInboxFilterService;
 
     @Autowired
     private BPAInboxFilterService bpaInboxFilterService;
@@ -152,7 +174,14 @@ public class InboxService {
         Integer totalCount = 0;
         if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)))
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
-        Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
+        
+        Integer nearingSlaProcessCount =  0;
+		if (!(processCriteria.getModuleName().equals(PTR) || processCriteria.getModuleName().equals(PT))) {
+			nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo,
+					processCriteria);
+		} else
+			nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo,
+					processCriteria);
         List<String> inputStatuses = new ArrayList<>();
         if (!CollectionUtils.isEmpty(processCriteria.getStatus()))
             inputStatuses = new ArrayList<>(processCriteria.getStatus());
@@ -345,6 +374,20 @@ public class InboxService {
                     isSearchResultEmpty = true;
                 }
             }
+            
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(PTR)) {
+                List<String> applicationNumbers = ptrInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }//for pet service
+            
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && ( processCriteria.getModuleName().equals(TL)
                     || processCriteria.getModuleName().equals(BPAREG))) {
                 totalCount = tlInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
@@ -598,8 +641,16 @@ public class InboxService {
             }
             
             List<ProcessInstance> processInstances = processInstanceResponse.getProcessInstances();
-            Map<String, ProcessInstance> processInstanceMap = processInstances.stream()
-                    .collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
+            
+            Map<String, ProcessInstance> processInstanceMap = new HashMap<>();
+			if (!CollectionUtils.isEmpty(processInstances)) {
+				for (ProcessInstance processInstance : processInstances) {
+					processInstanceMap.put(processInstance.getBusinessId(), processInstance);
+				}
+			} 
+//				else
+//				processInstanceMap = processInstances.stream()
+//						.collect(Collectors.toMap(ProcessInstance::getBusinessId, Function.identity()));
 
             //Adding searched Items in Inbox result object for WS and SW
             if (moduleName.equals(WS) || moduleName.equals(SW)) {
@@ -826,6 +877,10 @@ public class InboxService {
 			statusCountMap=	aggregateStatusCountMap;
 			//log.info("removeStatusCountMap:: "+ new Gson().toJson(statusCountMap));
 
+			 if(moduleSearchCriteria.containsKey("mobileNumber") || moduleSearchCriteria.containsKey("applicationNos"))
+	            {
+	                totalCount = inboxes.size();
+	            }
 		}
 		log.info("statusCountMap size :::: " + statusCountMap.size());
 		
@@ -1016,6 +1071,12 @@ public class InboxService {
         }
         StringBuilder url = new StringBuilder(srvMap.get("searchPath"));
         url.append("?tenantId=").append(tenantId);
+        
+        if(moduleSearchCriteria.containsKey("status")) { // for pet-service
+      	   if(businessServiceName.contains("ptr")) {
+      		   moduleSearchCriteria.remove("status");
+         }
+         }//for pet-service
        
         Set<String> searchParams = moduleSearchCriteria.keySet();
         

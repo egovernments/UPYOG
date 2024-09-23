@@ -1,27 +1,28 @@
 package org.egov.inbox.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.egov.common.utils.MultiStateInstanceUtil;
-import org.egov.inbox.config.InboxConfiguration;
-import org.egov.inbox.web.model.InboxSearchCriteria;
-import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
-
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.encryption.EncryptionService;
+import org.egov.inbox.config.InboxConfiguration;
+import org.egov.inbox.web.model.InboxSearchCriteria;
+import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -36,7 +37,11 @@ public class ElasticSearchQueryBuilder {
 
     @Autowired
     private MultiStateInstanceUtil centralInstanceUtil;
-
+    
+    
+    @Value(("${state.level.tenant.id}"))
+    private String stateLevelTenantId;
+    
     @Autowired
     public ElasticSearchQueryBuilder(ObjectMapper mapper, InboxConfiguration config, EncryptionService encryptionService) {
         this.mapper = mapper;
