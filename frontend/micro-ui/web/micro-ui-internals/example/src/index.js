@@ -42,7 +42,7 @@ import { pgrCustomizations, pgrComponents } from "./pgr";
 var Digit = window.Digit || {};
 
 const enabledModules = [
-  "TQM",
+  "Tqm",
   "PGR",
   "FSM",
   "Payment",

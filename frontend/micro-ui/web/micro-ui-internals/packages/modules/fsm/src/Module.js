@@ -220,7 +220,7 @@ const componentsToRegister = {
   PlusMinusInput,
   ConfirmationBox,
   SelectLocalityOrGramPanchayat,
-  TQMCard: TqmCard,
+  TqmCard,
 };
 
 export const initFSMComponents = () => {
