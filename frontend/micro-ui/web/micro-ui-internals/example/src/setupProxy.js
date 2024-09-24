@@ -5,10 +5,12 @@ const createProxy = createProxyMiddleware({
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   changeOrigin: true,
+  secure: false,
 });
 const assetsProxy = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_ASSETS || "https://qa.digit.org",
   changeOrigin: true,
+  secure: false,
 });
 module.exports = function (app) {
   [
@@ -64,6 +66,9 @@ module.exports = function (app) {
     "/inbox/v1/elastic/_search",
     "/fsm-calculator",
     "/service-request",
+    "/pet-services/pet-registration/_create",
+    "/pet-services/pet-registration/_search",
+    "/pet-services/pet-registration/_update",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

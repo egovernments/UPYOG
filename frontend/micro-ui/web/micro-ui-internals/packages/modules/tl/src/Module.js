@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard, CaseIcon, HomeLink } from "@egovernments/digit-ui-react-components";
+import { Header, CitizenHomeCard, CaseIcon, HomeLink } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -19,7 +19,7 @@ import SelectOwnershipProof from "./pageComponents/SelectOwnershipProof";
 import SelectTradeName from "./pageComponents/SelectTradeName";
 import SelectStructureType from "./pageComponents/SelectStructureType";
 // import SelectVehicleType from "./pageComponents/SelectVehicleType";
-import TLSelectVehicleType from "./pageComponents/TLSelectVehicleType";
+import SelectVehicleType from "./pageComponents/SelectVehicleType";
 import SelectBuildingType from "./pageComponents/SelectBuildingType";
 import SelectCommencementDate from "./pageComponents/SelectCommencementDate";
 import SelectTradeUnits from "./pageComponents/SelectTradeUnits";
@@ -112,7 +112,7 @@ const componentsToRegister = {
   SelectTradeName,
   SelectStructureType,
   // SelectVehicleType,
-  TLSelectVehicleType,
+  SelectVehicleType,
   SelectBuildingType,
   SelectCommencementDate,
   SelectTradeUnits,

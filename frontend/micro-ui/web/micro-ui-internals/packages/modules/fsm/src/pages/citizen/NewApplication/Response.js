@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, CardText, SubmitBar, LinkButton } from "@egovernments/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import getPDFData from "../../../getPDFData";
 
 const GetActionMessage = () => {
@@ -83,7 +83,6 @@ const Response = ({ data, onSuccess }) => {
               gender: selectGender?.code,
             },
             tenantId: city?.code,
-            additionalDetails: {},
             propertyUsage: subtype?.code,
             address: {
               tenantId: city?.code,
@@ -136,6 +135,7 @@ const Response = ({ data, onSuccess }) => {
               propertyID : propertyID?.propertyID,
               distancefromroad : data?.roadWidth?.distancefromroad,
               roadWidth: data?.roadWidth?.roadWidth,
+              propertyID : data?.cptId?.id
             },
             advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
           },

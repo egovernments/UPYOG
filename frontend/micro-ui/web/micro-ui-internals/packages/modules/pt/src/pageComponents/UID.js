@@ -1,4 +1,4 @@
-import { CardLabel,  LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel,  LabelFieldPair, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
 import FormStep from "../../../../react-components/src/molecules/FormStep";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -16,7 +16,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
   if (!isNaN(index)) {
     [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || "");
   } else {
-    [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || "");
+    [uid, setUid] = useState(formData?.originalData?.additionalDetails?.uid || formData?.uid?.uid || formData?.additionalDetails?.uid||"");
 
   }
   const [error, setError] = useState(null);

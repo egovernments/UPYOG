@@ -6,6 +6,8 @@ import static org.apache.commons.codec.CharEncoding.US_ASCII;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Base64;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,6 +63,7 @@ public class RestService {
         String url =( indexServiceHost) + index + indexServiceHostSearch;
         HttpHeaders headers = getHttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        LOGGER.info("headers : " + headers.toString());
         LOGGER.info("Index Name : " + index);
         LOGGER.info("Searching ES for Query: " + searchQuery);
         HttpEntity<String> requestEntity = new HttpEntity<>(searchQuery, headers);
@@ -67,6 +73,7 @@ public class RestService {
         try {
             ResponseEntity<Object> response = retryTemplate.postForEntity(url, requestEntity);
             responseNode = new ObjectMapper().convertValue(response.getBody(), JsonNode.class);
+            LOGGER.info("RestTemplate response :- "+responseNode);
             //LOGGER.info("RestTemplate response :- "+responseNode);
 
         } catch (HttpClientErrorException e) {
@@ -138,7 +145,7 @@ public class RestService {
 
     private HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(AUTHORIZATION, getBase64Value(userName, password));
+        headers.add("Authorization", getESEncodedCredentials());
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -147,6 +154,26 @@ public class RestService {
         headers.setAccept(mediaTypes);
         return headers;
     }
+
+    public String getESEncodedCredentials() {
+        String credentials = userName + ":" + password;
+        byte[] credentialsBytes = credentials.getBytes();
+        byte[] base64CredentialsBytes = Base64.getEncoder().encode(credentialsBytes);
+        return "Basic " + new String(base64CredentialsBytes);
+    }
+
+//    /**
+//     * Helper Method to create the Base64Value for headers
+//     *
+//     * @param userName
+//     * @param password
+//     * @return
+//     */
+//    private String getBase64Value(String userName, String password) {
+//        String authString = String.format("%s:%s", userName, password);
+//        byte[] encodedAuthString = Base64.encodeBase64(authString.getBytes(Charset.forName(US_ASCII)));
+//        return String.format(BASIC_AUTH, new String(encodedAuthString));
+//    }
 
     /**
      * Helper Method to create the Base64Value for headers

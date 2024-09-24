@@ -1,4 +1,3 @@
-
 package org.egov.pt.repository;
 
 import java.util.ArrayList;
@@ -73,7 +72,9 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
-	private EncProperties config;
+	
+	@Autowired
+	private PropertyConfiguration config;
 
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -91,13 +92,20 @@ public class PropertyRepository {
 	public List<Property> getProperties(PropertyCriteria criteria, Boolean isApiOpen, Boolean isPlainSearch) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
+		String query;
+		
+		if(criteria.getIsDefaulterNoticeSearch())
+		query=queryBuilder.getPropertySearchQueryForDeafauterNotice(criteria,preparedStmtList);
+		else
+		query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
 		try {
 			query = centralUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
 		} catch (InvalidTenantIdException e) {
 			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
 					"TenantId length is not sufficient to replace query schema in a multi state instance");
 		}
+		log.info("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
+
 		if (isApiOpen)
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
 		if(criteria.getIsDefaulterNoticeSearch())
@@ -177,9 +185,11 @@ public class PropertyRepository {
 	public List<Property> getPropertiesWithOwnerInfo(PropertyCriteria criteria, RequestInfo requestInfo, Boolean isInternal) {
 
 		List<Property> properties;
+		
+		String stateLevelTenant=config.getStateLevelTenantId()!=null?config.getStateLevelTenantId():"pg";
 
 		if(criteria.getTenantId() == null)
-		{	criteria.setTenantId(config.getStateLevelTenantId()); }
+		{	criteria.setTenantId(stateLevelTenant); }
 
 		Boolean isOpenSearch = isInternal ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
 
@@ -346,3 +356,4 @@ public class PropertyRepository {
 		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), propertyAuditEncRowMapper);
 	}
 }
+

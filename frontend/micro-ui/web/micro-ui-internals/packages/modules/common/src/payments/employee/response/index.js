@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@upyog/digit-ui-react-components";
 import { useHistory, useParams, Link, LinkLabel } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -193,6 +193,7 @@ export const SuccessfulPayment = (props) => {
 
     if (!payments.Payments[0]?.fileStoreId) {
       let assessmentYear="",assessmentYearForReceipt="";
+      let businessServ=payments.Payments[0].paymentDetails[0].businessService;
       let count=0;
       let toDate,fromDate;
 	  if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
@@ -223,7 +224,29 @@ export const SuccessfulPayment = (props) => {
             payments.Payments[0].paymentDetails[0].additionalDetails=details; 
             printRecieptNew(payments)
         }
+        else if(businessServ.includes("BPA")){
+          let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
+          const paymentData=payments.Payments[0];
+          let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
+          console.log("bpppp", bpaResponse)
+          const updatedpayments={
+            ...paymentData,
+           
+                paymentDetails:[
+                  {
+                    ...paymentData.paymentDetails?.[0],
+                    additionalDetails:{
+                      ...paymentData.paymentDetails[0].additionalDetails,
+                      "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
+                    },
+                  },
+                ],  
+             
+          }
+          response = await Digit.PaymentService.generatePdf(state, { Payments: [{...updatedpayments}] }, generatePdfKey);
+        }
         else {
+          console.log("0987", payments.Payments)
           response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
         }
       

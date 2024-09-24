@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, LabelFieldPair, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, LabelFieldPair, DeleteIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState ,Fragment} from "react";
 import Timeline from "../components/TLTimeline";
 
@@ -17,7 +17,8 @@ const PropertyStructureDetails = ({ t, config, onSelect, userType, formData }) =
   let path = window.location.pathname.split("/");
   let currentFloor = Number(path[path.length - 1]);
   let isFloor = window.location.pathname.includes("new-application/units") || window.location.pathname.includes("/edit-application/units");
-  const [fields, setFields] = useState(window.location.pathname.includes("/pt/modify-application/")? formData.propertyStructureDetails: {"usageCategory":"","structureType":"","ageOfProperty":""})
+  const [fields, setFields] = useState(window.location.pathname.includes("/pt/modify-application/")? formData?.propertyStructureDetails: formData?.propertyStructureDetails ? formData?.propertyStructureDetails:window.location.pathname.includes("/edit-application/PropertyStructureDetails")? {"usageCategory":"","structureType":formData?.additionalDetails?.structureType ,"ageOfProperty":formData?.additionalDetails?.ageOfProperty
+}: {"usageCategory":"","structureType":"","ageOfProperty":""})
    
   
 console.log("formaDataPropertyStructureDetails",formData)

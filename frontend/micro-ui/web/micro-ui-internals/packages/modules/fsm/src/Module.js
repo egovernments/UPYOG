@@ -1,8 +1,9 @@
-import { CitizenHomeCard, CitizenTruck, Loader } from "@egovernments/digit-ui-react-components";
+import { CitizenHomeCard, CitizenTruck, Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import FSMCard from "./components/FsmCard";
+import TqmCard from "./components/TqmCard";
 import CheckSlum from "./pageComponents/CheckSlum";
 // import SelectAddress from "./pageComponents/SelectAddress";
 import FSMSelectAddress from "./pageComponents/FSMSelectAddress";
@@ -219,6 +220,7 @@ const componentsToRegister = {
   PlusMinusInput,
   ConfirmationBox,
   SelectLocalityOrGramPanchayat,
+  TqmCard,
 };
 
 export const initFSMComponents = () => {
