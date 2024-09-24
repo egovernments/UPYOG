@@ -292,10 +292,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setError("BPA_ERROR_MULTIPLE_OWNER");
         }
         else {
+            let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"));
+            if(!formData?.address?.locality?.code){
+                formData.address = propertyData?.address;
+            }
             let owner = formData.owners;
             let ownerStep;
             ownerStep = { ...owner, owners: fields, ownershipCategory: ownershipCategory };
-
+            console.log(formData.address,"formData.address")
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -353,7 +357,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 const userInfo = Digit.UserService.getUser();
                 const accountId = userInfo?.info?.uuid;
-                payload.tenantId = formData?.address?.city?.code;
+                payload.tenantId = formData?.address?.city?.code || formData?.address?.tenantId;
                 payload.workflow = { action: "INITIATE", assignes : [userInfo?.info?.uuid] };
                 payload.accountId = accountId;
                 payload.documents = null;
@@ -368,7 +372,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo = {};
                 //For Address
                 payload.landInfo.address = {};
-                if (formData?.address?.city?.code) payload.landInfo.address.city = formData?.address?.city?.code;
+                if (formData?.address?.city?.code) payload.landInfo.address.city = formData?.address?.city?.code || formData?.address?.tenantId;
                 if (formData?.address?.locality?.code) payload.landInfo.address.locality = { code: formData?.address?.locality?.code };
                 if (formData?.address?.pincode) payload.landInfo.address.pincode = formData?.address?.pincode;
                 if (formData?.address?.landmark) payload.landInfo.address.landmark = formData?.address?.landmark;
@@ -377,7 +381,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
-                payload.landInfo.tenantId = formData?.address?.city?.code;
+                payload.landInfo.tenantId = formData?.address?.city?.code || formData?.address?.tenantId;
 
                 //for units
                 const blockOccupancyDetails = formData;

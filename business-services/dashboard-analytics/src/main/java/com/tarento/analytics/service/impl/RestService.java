@@ -8,6 +8,11 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Base64;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class RestService {
@@ -65,6 +74,7 @@ public class RestService {
             ResponseEntity<Object> response = retryTemplate.postForEntity(url, requestEntity);
             responseNode = new ObjectMapper().convertValue(response.getBody(), JsonNode.class);
             LOGGER.info("RestTemplate response :- "+responseNode);
+            //LOGGER.info("RestTemplate response :- "+responseNode);
 
         } catch (HttpClientErrorException e) {
             e.printStackTrace();
@@ -164,6 +174,19 @@ public class RestService {
 //        byte[] encodedAuthString = Base64.encodeBase64(authString.getBytes(Charset.forName(US_ASCII)));
 //        return String.format(BASIC_AUTH, new String(encodedAuthString));
 //    }
+
+    /**
+     * Helper Method to create the Base64Value for headers
+     *
+     * @param userName
+     * @param password
+     * @return
+     */
+    private String getBase64Value(String userName, String password) {
+        String authString = String.format("%s:%s", userName, password);
+        byte[] encodedAuthString = Base64.encodeBase64(authString.getBytes(Charset.forName(US_ASCII)));
+        return String.format(BASIC_AUTH, new String(encodedAuthString));
+    }
 
 }
 
