@@ -2,7 +2,6 @@ package org.egov.individual.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.models.Error;
-import org.egov.common.models.core.SearchResponse;
 import org.egov.common.models.individual.Address;
 import org.egov.common.models.individual.AddressType;
 import org.egov.common.models.individual.Identifier;
@@ -65,10 +64,7 @@ public class RowVersionValidatorTest {
         IndividualBulkRequest individualBulkRequest = IndividualBulkRequestTestBuilder.builder().withIndividuals(individual).build();
         List<Individual> existingIndividuals = new ArrayList<>();
         existingIndividuals.add(individual);
-        lenient().when(individualRepository.findById(anyList(), anyString(), eq(false))).thenReturn(SearchResponse.<Individual>builder()
-                .totalCount(Long.valueOf(existingIndividuals.size()))
-                .response(existingIndividuals)
-                .build());
+        lenient().when(individualRepository.findById(anyList(), anyString(), eq(false))).thenReturn(existingIndividuals);
         assertTrue(rowVersionValidator.validate(individualBulkRequest).isEmpty());
 
     }
@@ -82,9 +78,9 @@ public class RowVersionValidatorTest {
                 .build();
         individualBulkRequest.getIndividuals().get(0).setRowVersion(2);
         when(individualRepository.findById(anyList(), anyString(), anyBoolean()))
-                .thenReturn(SearchResponse.<Individual>builder().totalCount(1L).response(Collections.singletonList(IndividualTestBuilder.builder()
+                .thenReturn(Collections.singletonList(IndividualTestBuilder.builder()
                         .withId("some-id")
-                        .build())).build());
+                        .build()));
         Map<Individual, List<Error>> errorDetailsMap = new HashMap<>();
         errorDetailsMap = rowVersionValidator.validate(individualBulkRequest);
         List<Error> errorList = errorDetailsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());

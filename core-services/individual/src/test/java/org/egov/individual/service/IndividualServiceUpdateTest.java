@@ -1,7 +1,6 @@
 package org.egov.individual.service;
 
 import org.egov.common.helper.RequestInfoTestBuilder;
-import org.egov.common.models.core.SearchResponse;
 import org.egov.common.models.individual.Identifier;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.IndividualBulkRequest;
@@ -176,10 +175,7 @@ class IndividualServiceUpdateTest {
                 .build());
 
 
-        when(individualRepository.findById(anyList(),eq("id"),eq(false))).thenReturn(SearchResponse.<Individual>builder()
-                .totalCount(Long.valueOf(individualsInDb.size()))
-                .response(individualsInDb)
-                .build());
+        when(individualRepository.findById(anyList(),eq("id"),eq(false))).thenReturn(individualsInDb);
         when(encryptionService.encrypt(any(IndividualBulkRequest.class),
                 anyList(), any(String.class), anyBoolean())).thenReturn(Collections.singletonList(requestIndividual));
 
@@ -250,10 +246,7 @@ class IndividualServiceUpdateTest {
                 .withAuditDetails()
                 .build());
 
-        when(individualRepository.findById(anyList(),eq("id"),eq(false))).thenReturn(SearchResponse.<Individual>builder()
-                .totalCount(Long.valueOf(individualsInDb.size()))
-                .response(individualsInDb)
-                .build());
+        when(individualRepository.findById(anyList(),eq("id"),eq(false))).thenReturn(individualsInDb);
         when(encryptionService.encrypt(any(IndividualBulkRequest.class),
                 anyList(), any(String.class), anyBoolean())).thenReturn(Collections.singletonList(requestIndividual));
         List<Individual> result = individualService.update(request);
