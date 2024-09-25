@@ -34,9 +34,7 @@ public class SearchParam {
 
         GTE("GTE"),
 
-        LTE("LTE"), 
-        
-        WILDCARD("WILDCARD");
+        LTE("LTE");
 
 
         private String value;
