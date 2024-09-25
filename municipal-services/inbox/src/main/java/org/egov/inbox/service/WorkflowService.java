@@ -2,7 +2,6 @@ package org.egov.inbox.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,8 +23,8 @@ import org.egov.inbox.web.model.workflow.BusinessService;
 import org.egov.inbox.web.model.workflow.BusinessServiceResponse;
 import org.egov.inbox.web.model.workflow.ProcessInstanceResponse;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
-import org.egov.inbox.web.model.workflow.State;
 import org.egov.tracer.model.CustomException;
+import org.egov.inbox.web.model.workflow.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -239,15 +238,8 @@ public class WorkflowService {
 			url.append("&status=").append(StringUtils.arrayToDelimitedString(criteria.getStatus().toArray(),","));
 		}
 		
-		if(!CollectionUtils.isEmpty(criteria.getBusinessIds())&& criteria.getBusinessService().toString().contains("ptr")) {
-			List<String> sortedBusinessIds = criteria.getBusinessIds().stream()
-		            .sorted(Comparator.reverseOrder()).limit(200).collect(Collectors.toList());
-			url.append("&businessIds=").append(StringUtils.arrayToDelimitedString(sortedBusinessIds.toArray(),","));
-		}
-		if (!CollectionUtils.isEmpty(criteria.getBusinessIds())
-				&& !criteria.getBusinessService().toString().contains("ptr")) {
-			url.append("&businessIds=")
-					.append(StringUtils.arrayToDelimitedString(criteria.getBusinessIds().toArray(), ","));
+		if(!CollectionUtils.isEmpty(criteria.getBusinessIds())) {
+			url.append("&businessIds=").append(StringUtils.arrayToDelimitedString(criteria.getBusinessIds().toArray(),","));
 		}
 		
 		if(!CollectionUtils.isEmpty(criteria.getIds())) {
