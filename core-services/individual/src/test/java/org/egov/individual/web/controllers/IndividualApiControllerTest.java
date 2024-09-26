@@ -8,6 +8,7 @@ import org.egov.common.models.individual.IndividualBulkResponse;
 import org.egov.common.models.individual.IndividualRequest;
 import org.egov.common.models.individual.IndividualResponse;
 import org.egov.common.producer.Producer;
+import org.egov.encryption.config.EncryptionConfiguration;
 import org.egov.individual.TestConfiguration;
 import org.egov.individual.config.IndividualProperties;
 import org.egov.individual.helper.IndividualBulkRequestTestBuilder;
@@ -46,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * API tests for IndividualApiController
  */
 @WebMvcTest(IndividualApiController.class)
-@Import({TestConfiguration.class})
+@Import({TestConfiguration.class,EncryptionConfiguration.class})
 class IndividualApiControllerTest {
 
     @Autowired
