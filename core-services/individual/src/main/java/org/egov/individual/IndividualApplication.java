@@ -1,12 +1,13 @@
 package org.egov.individual;
 
+import org.egov.encryption.config.EncryptionConfiguration;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Import;
 
-@Import({ TracerConfiguration.class })
+@Import({ TracerConfiguration.class,EncryptionConfiguration.class })
 @SpringBootApplication
 @EnableCaching
 public class IndividualApplication {
