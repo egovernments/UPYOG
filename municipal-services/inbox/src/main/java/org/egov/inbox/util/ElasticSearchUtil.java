@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.egov.inbox.config.InboxConfiguration;
 import org.egov.inbox.web.model.InboxSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ElasticSearchUtil {
 	
-	
+	@Autowired
     private InboxConfiguration config;
 
 	 /**
