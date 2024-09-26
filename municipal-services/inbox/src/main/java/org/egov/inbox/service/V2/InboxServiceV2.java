@@ -35,6 +35,7 @@ import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.repository.builder.V2.InboxQueryBuilder;
 import org.egov.inbox.service.WorkflowService;
 import org.egov.inbox.service.V2.validator.ValidatorDefaultImplementation;
+import org.egov.inbox.util.ElasticSearchUtil;
 import org.egov.inbox.util.MDMSUtil;
 import org.egov.inbox.web.model.Inbox;
 import org.egov.inbox.web.model.InboxRequest;
@@ -49,6 +50,9 @@ import org.egov.inbox.web.model.workflow.ProcessInstance;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -81,6 +85,9 @@ public class InboxServiceV2 {
 
     @Autowired
     private MDMSUtil mdmsUtil;
+    
+    @Autowired
+    private ElasticSearchUtil elasticSearchUtil;
 
     @Autowired
     private ObjectMapper mapper;
@@ -152,16 +159,38 @@ public class InboxServiceV2 {
         if(CollectionUtils.isEmpty(inboxRequest.getInbox().getProcessSearchCriteria().getStatus())){
             return new ArrayList<>();
         }
+//        Map<String, Object> finalQueryBody = queryBuilder.getESQuery(inboxRequest, Boolean.TRUE);
+//        try {
+//            String q = mapper.writeValueAsString(finalQueryBody);
+//            log.info("Query: "+q);
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        StringBuilder uri = getURI(indexName, SEARCH_PATH);
+//        HttpHeaders headers = elasticSearchUtil.getHttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<String> requestEntity = new HttpEntity<>(finalQueryBody, headers);
+//        Object result = serviceRequestRepository.fetchResult(uri, finalQueryBody);
+//        
         Map<String, Object> finalQueryBody = queryBuilder.getESQuery(inboxRequest, Boolean.TRUE);
+        String q = null;
         try {
-            String q = mapper.writeValueAsString(finalQueryBody);
-            log.info("Query: "+q);
-        }
-        catch (Exception e){
+            q = mapper.writeValueAsString(finalQueryBody);  // Convert Map to JSON string
+            log.info("Query: " + q);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         StringBuilder uri = getURI(indexName, SEARCH_PATH);
-        Object result = serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        HttpHeaders headers = elasticSearchUtil.getHttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Use the JSON string 'q' in the HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(q, headers);
+    
+//        
+        Object result = serviceRequestRepository.fetchResult(uri, requestEntity);
         List<Inbox> inboxItemsList = parseInboxItemsFromSearchResponse(result, businessServices);
         log.info(result.toString());
         return inboxItemsList;
@@ -195,8 +224,27 @@ public class InboxServiceV2 {
     public Integer getTotalApplicationCount(InboxRequest inboxRequest, String indexName){
 
         Map<String, Object> finalQueryBody = queryBuilder.getESQuery(inboxRequest, Boolean.FALSE);
-        StringBuilder uri = getURI(indexName, COUNT_PATH);
-        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+//        StringBuilder uri = getURI(indexName, COUNT_PATH);
+//        ---------------------------------------------
+        String q = null;
+        try {
+            q = mapper.writeValueAsString(finalQueryBody);  // Convert Map to JSON string
+            log.info("Query: " + q);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        StringBuilder uri = getURI(indexName, SEARCH_PATH);
+        HttpHeaders headers = elasticSearchUtil.getHttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Use the JSON string 'q' in the HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(q, headers);
+    
+        
+        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, requestEntity);
+//        ---------------------------------------------
+//        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
         Integer totalCount = 0;
         if(response.containsKey(COUNT_CONSTANT)){
             totalCount = (Integer) response.get(COUNT_CONSTANT);
@@ -208,8 +256,28 @@ public class InboxServiceV2 {
 
     public List<HashMap<String, Object>> getStatusCountMap(InboxRequest inboxRequest, String indexName){
         Map<String, Object> finalQueryBody = queryBuilder.getStatusCountQuery(inboxRequest);
+//        StringBuilder uri = getURI(indexName, SEARCH_PATH);
+//        ------------------------------
+        String q = null;
+        try {
+            q = mapper.writeValueAsString(finalQueryBody);  // Convert Map to JSON string
+            log.info("Query: " + q);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         StringBuilder uri = getURI(indexName, SEARCH_PATH);
-        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        HttpHeaders headers = elasticSearchUtil.getHttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Use the JSON string 'q' in the HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(q, headers);
+    
+        
+        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, requestEntity);
+        
+//        --------------------------------
+//        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
         Set<String> actionableStatuses = new HashSet<>(inboxRequest.getInbox().getProcessSearchCriteria().getStatus());
         HashMap<String, Object> statusCountMap = parseStatusCountMapFromAggregationResponse(response, actionableStatuses);
         List<HashMap<String, Object>> transformedStatusMap = transformStatusMap(inboxRequest, statusCountMap);
@@ -361,8 +429,27 @@ public class InboxServiceV2 {
             Long businessServiceSla = businessServiceSlaMap.get(businessService);
             inboxRequest.getInbox().getProcessSearchCriteria().setStatus(businessServiceVsUuidsBasedOnSearchCriteria.get(businessService));
             Map<String, Object> finalQueryBody = queryBuilder.getNearingSlaCountQuery(inboxRequest, businessServiceSla);
-            StringBuilder uri = getURI(indexName, COUNT_PATH);
-            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+//            StringBuilder uri = getURI(indexName, COUNT_PATH);
+//  -----------------------------------------------------------      
+            String q = null;
+            try {
+                q = mapper.writeValueAsString(finalQueryBody);  // Convert Map to JSON string
+                log.info("Query: " + q);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            StringBuilder uri = getURI(indexName, SEARCH_PATH);
+            HttpHeaders headers = elasticSearchUtil.getHttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // Use the JSON string 'q' in the HttpEntity
+            HttpEntity<String> requestEntity = new HttpEntity<>(q, headers);
+        
+            
+            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, requestEntity);
+//    ------------------------------------------------------------------        
+//            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
             Integer currentCount = 0;
             if(response.containsKey(COUNT_CONSTANT)){
                 currentCount = (Integer) response.get(COUNT_CONSTANT);
@@ -399,15 +486,35 @@ public class InboxServiceV2 {
 
     private List<Data> getDataFromSimpleSearch(SearchRequest searchRequest, String index) {
         Map<String, Object> finalQueryBody = queryBuilder.getESQueryForSimpleSearch(searchRequest, Boolean.TRUE);
+//        try {
+//            String q = mapper.writeValueAsString(finalQueryBody);
+//            log.info("Query: "+q);
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        StringBuilder uri = getURI(index, SEARCH_PATH);
+        //-----------------------------------------------
+        String q = null;
         try {
-            String q = mapper.writeValueAsString(finalQueryBody);
-            log.info("Query: "+q);
-        }
-        catch (Exception e){
+            q = mapper.writeValueAsString(finalQueryBody);  // Convert Map to JSON string
+            log.info("Query: " + q);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         StringBuilder uri = getURI(index, SEARCH_PATH);
-        Object result = serviceRequestRepository.fetchResult(uri, finalQueryBody);
+        HttpHeaders headers = elasticSearchUtil.getHttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Use the JSON string 'q' in the HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(q, headers);
+    
+        
+        Object result = serviceRequestRepository.fetchResult(uri, requestEntity);
+        
+        //----------------------------------------------
+//        Object result = serviceRequestRepository.fetchResult(uri, finalQueryBody);
         List<Data> dataList = parseSearchResponseForSimpleSearch(result);
         return dataList;
     }
