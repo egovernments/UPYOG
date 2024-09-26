@@ -1,22 +1,49 @@
 package org.egov.inbox.service.V2;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.wnameless.json.flattener.JsonFlattener;
-import com.google.gson.Gson;
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
+import static org.egov.inbox.util.InboxConstants.AGGREGATIONS_KEY;
+import static org.egov.inbox.util.InboxConstants.APPLICATION_STATUS_KEY;
+import static org.egov.inbox.util.InboxConstants.AUDIT_DETAILS_KEY;
+import static org.egov.inbox.util.InboxConstants.BUSINESSSERVICE_KEY;
+import static org.egov.inbox.util.InboxConstants.BUSINESS_SERVICE_PATH;
+import static org.egov.inbox.util.InboxConstants.COUNT_CONSTANT;
+import static org.egov.inbox.util.InboxConstants.COUNT_PATH;
+import static org.egov.inbox.util.InboxConstants.CREATED_TIME_KEY;
+import static org.egov.inbox.util.InboxConstants.CURRENT_PROCESS_INSTANCE_CONSTANT;
+import static org.egov.inbox.util.InboxConstants.DATA_KEY;
+import static org.egov.inbox.util.InboxConstants.DOC_COUNT_KEY;
+import static org.egov.inbox.util.InboxConstants.HITS;
+import static org.egov.inbox.util.InboxConstants.KEY;
+import static org.egov.inbox.util.InboxConstants.LAST_MODIFIED_TIME_KEY;
+import static org.egov.inbox.util.InboxConstants.SEARCH_PATH;
+import static org.egov.inbox.util.InboxConstants.SERVICESLA_KEY;
+import static org.egov.inbox.util.InboxConstants.SOURCE_KEY;
+import static org.egov.inbox.util.InboxConstants.STATE_UUID_PATH;
+import static org.egov.inbox.util.InboxConstants.STATUSID_KEY;
+import static org.egov.inbox.util.InboxConstants.STATUS_COUNT_AGGREGATIONS_BUCKETS_PATH;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.egov.hash.HashService;
 import org.egov.inbox.config.InboxConfiguration;
 import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.repository.builder.V2.InboxQueryBuilder;
-import org.egov.inbox.service.V2.validator.ValidatorDefaultImplementation;
 import org.egov.inbox.service.WorkflowService;
+import org.egov.inbox.service.V2.validator.ValidatorDefaultImplementation;
 import org.egov.inbox.util.MDMSUtil;
 import org.egov.inbox.web.model.Inbox;
 import org.egov.inbox.web.model.InboxRequest;
 import org.egov.inbox.web.model.InboxResponse;
-import org.egov.inbox.web.model.V2.*;
+import org.egov.inbox.web.model.V2.Data;
+import org.egov.inbox.web.model.V2.Field;
+import org.egov.inbox.web.model.V2.InboxQueryConfiguration;
+import org.egov.inbox.web.model.V2.SearchRequest;
+import org.egov.inbox.web.model.V2.SearchResponse;
 import org.egov.inbox.web.model.workflow.BusinessService;
 import org.egov.inbox.web.model.workflow.ProcessInstance;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
@@ -26,9 +53,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.wnameless.json.flattener.JsonFlattener;
+import com.jayway.jsonpath.JsonPath;
 
-import static org.egov.inbox.util.InboxConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j

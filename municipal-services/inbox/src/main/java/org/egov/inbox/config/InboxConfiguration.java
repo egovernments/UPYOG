@@ -85,17 +85,17 @@ public class InboxConfiguration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsSearchEndPoint;
 
-	@Value("${egov.es.username}")
-	private String esUserName;
-
-	@Value("${egov.es.password}")
-	private String esPassword;
-
 	@Value("${services.esindexer.host}")
 	private String indexServiceHost;
 
 	@Value("${egov.services.esindexer.host.search}")
 	private String indexServiceHostSearchEndpoint;
+
+	@Value("${services.esindexer.username}")
+	private String userName;
+
+	@Value("${services.esindexer.password}")
+	private String password;
 
 	@Value("${egov.user.host}")
 	private String userHost;
@@ -109,7 +109,7 @@ public class InboxConfiguration {
 	@Value("${egov.internal.microservice.user.uuid}")
 	private String egovInternalMicroserviceUserUuid;
 
-	@Value("${parent.level.tenant.id}")
+	@Value("${state.level.tenant.id}")
 	private String parentLevelTenantId;
 
 	// ES Config
@@ -140,3 +140,4 @@ public class InboxConfiguration {
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
 }
+
