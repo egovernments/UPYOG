@@ -53,17 +53,7 @@ public class IndividualSearchTestBuilder {
         this.builder.clientReferenceId(ids);
         return this;
     }
-    public IndividualSearchTestBuilder byUserUUID(String... args) {
-        ArrayList<String> ids = new ArrayList<>();
-        if (args != null && args.length > 0) {
-            ids.add(args[0]);
-        } else {
-            ids.add("some-user-uuid");
-        }
 
-        this.builder.userUuid(ids);
-        return this;
-    }
 
     public IndividualSearchTestBuilder byName() {
         this.builder.name(Name.builder()

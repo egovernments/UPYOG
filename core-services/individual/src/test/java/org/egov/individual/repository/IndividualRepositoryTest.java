@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -69,17 +70,25 @@ class IndividualRepositoryTest {
         Individual individual = IndividualTestBuilder.builder()
                 .withId()
                 .build();
+
         when(namedParameterJdbcTemplate.query(anyString(), anyMap(), any(IndividualRowMapper.class)))
                 .thenReturn(Collections.singletonList(individual));
+
+        when(namedParameterJdbcTemplate.query(anyString(), anyMap(), any(ResultSetExtractor.class))).thenReturn(0L);
 
         individualRepository.findById(Arrays.asList("some-id"), "id", false);
 
         verify(namedParameterJdbcTemplate, times(1))
                 .query(anyString(), anyMap(), any(IndividualRowMapper.class));
+
         verify(namedParameterJdbcTemplate, times(1))
                 .query(anyString(), anyMap(), any(AddressRowMapper.class));
+
         verify(namedParameterJdbcTemplate, times(1))
                 .query(anyString(), anyMap(), any(IdentifierRowMapper.class));
+
+        verify(namedParameterJdbcTemplate, times(1))
+                .query(anyString(), anyMap(), any(ResultSetExtractor.class));
     }
 
     @Test
@@ -88,7 +97,6 @@ class IndividualRepositoryTest {
         IndividualSearch individualSearch = IndividualSearchTestBuilder.builder()
                 .byId()
                 .byClientReferenceId()
-                .byUserUUID()
                 .byGender()
                 .byName()
                 .byDateOfBirth()
@@ -97,8 +105,11 @@ class IndividualRepositoryTest {
         Individual individual = IndividualTestBuilder.builder()
                 .withId()
                 .build();
+
         when(namedParameterJdbcTemplate.query(anyString(), anyMap(), any(IndividualRowMapper.class)))
                 .thenReturn(Collections.singletonList(individual));
+
+        when(namedParameterJdbcTemplate.query(anyString(), anyMap(), any(ResultSetExtractor.class))).thenReturn(0L);
 
         individualRepository.find(individualSearch,
                 2, 0, "default", null, true);
@@ -109,6 +120,9 @@ class IndividualRepositoryTest {
                 .query(anyString(), anyMap(), any(AddressRowMapper.class));
         verify(namedParameterJdbcTemplate, times(1))
                 .query(anyString(), anyMap(), any(IdentifierRowMapper.class));
+        verify(namedParameterJdbcTemplate, times(1))
+                .query(anyString(), anyMap(), any(ResultSetExtractor.class));
+
     }
 
     @Test
@@ -146,7 +160,6 @@ class IndividualRepositoryTest {
         IndividualSearch individualSearch = IndividualSearchTestBuilder.builder()
                 .byId()
                 .byClientReferenceId()
-                .byUserUUID()
                 .byGender()
                 .byName()
                 .byDateOfBirth()

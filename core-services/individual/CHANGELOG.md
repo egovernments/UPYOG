@@ -1,8 +1,5 @@
 All notable changes to this module will be documented in this file.
 
-## 1.1.3 
-- Added ability to search by user UUID for individual search.
-
 ## 1.1.2
 - upgraded version from beta
 
