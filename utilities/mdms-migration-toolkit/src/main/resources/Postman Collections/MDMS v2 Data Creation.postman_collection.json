@@ -52309,6 +52309,1418 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "PQM",
+			"item": [
+				{
+					"name": "PQM.Material",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"DRY_SLUDGE_COMPOSTING\",",
+									"    \"name\": \"Dry sludge ready for co-composting\"",
+									"  },",
+									"  {",
+									"    \"code\": \"THICKENED_SLUDGE\",",
+									"    \"name\": \"Thickened Sludge\"",
+									"  },",
+									"  {",
+									"    \"code\": \"EFFLUENT_TREATED\",",
+									"    \"name\": \"Treated Effluent\"",
+									"  },",
+									"  {",
+									"    \"code\": \"EFFLUENT_INTERIM\",",
+									"    \"name\": \"Effluent (interim)\"",
+									"  },",
+									"  {",
+									"    \"code\": \"RAW_SLUDGE\",",
+									"    \"name\": \"Raw Sludge from Septic Tanks\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.PlantConfig",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"PLANT_CONFIGURATION_UPYOG\",",
+									"    \"manualTestPendingEscalationDays\": 1,",
+									"    \"pendingTestsToDisplayWithinDays\": 15",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.BenchmarkRule",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"GTR\",",
+									"    \"name\": \"Greater Than\"",
+									"  },",
+									"  {",
+									"    \"code\": \"LST\",",
+									"    \"name\": \"Less Than\"",
+									"  },",
+									"  {",
+									"    \"code\": \"BTW\",",
+									"    \"name\": \"Between\"",
+									"  },",
+									"  {",
+									"    \"code\": \"OSD\",",
+									"    \"name\": \"Outside Range\"",
+									"  },",
+									"  {",
+									"    \"code\": \"EQ\",",
+									"    \"name\": \"Equals\"",
+									"  },",
+									"  {",
+									"    \"code\": \"NEQ\",",
+									"    \"name\": \"Not Equals\"",
+									"  },",
+									"  {",
+									"    \"code\": \"GTROREQ\",",
+									"    \"name\": \"Greater Than Or Equals\"",
+									"  },",
+									"  {",
+									"    \"code\": \"LSTOREQ\",",
+									"    \"name\": \"Less Than Or Equals\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.Parameter",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"TDS\",",
+									"    \"name\": \"TDS\"",
+									"  },",
+									"  {",
+									"    \"code\": \"TSS\",",
+									"    \"name\": \"TSS\"",
+									"  },",
+									"  {",
+									"    \"code\": \"COD\",",
+									"    \"name\": \"COD\"",
+									"  },",
+									"  {",
+									"    \"code\": \"BOD\",",
+									"    \"name\": \"BOD\"",
+									"  },",
+									"  {",
+									"    \"code\": \"PH\",",
+									"    \"name\": \"pH\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.PlantType",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"CO_TREATMENT_PLANT\",",
+									"    \"name\": \"Co-Treatment Plant\"",
+									"  },",
+									"  {",
+									"    \"code\": \"FEACAL_SLUDGE_TREATMENT_PLANT\",",
+									"    \"name\": \"Faecal Sludge Treatment Plant\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.Stage",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"AERATION\",",
+									"    \"name\": \"Aeration\",",
+									"    \"input\": [",
+									"      \"EFFLUENT_INTERIM\"",
+									"    ],",
+									"    \"output\": [",
+									"      \"EFFLUENT_TREATED\"",
+									"    ]",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.WasteType",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"FAECAL_SLUDGE\",",
+									"    \"name\": \"Faecal Sludge \"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.ProcessType",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"DEWATS\",",
+									"    \"name\": \"DEWATS\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.Unit",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"NA\",",
+									"    \"name\": \"Not Applicable\"",
+									"  },",
+									"  {",
+									"    \"code\": \"MGPL\",",
+									"    \"name\": \"mg per Liter\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.SourceType",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"LAB_ADHOC\",",
+									"    \"name\": \"LAB Adhoc\",",
+									"    \"description\": \"Ad-hoc test created while inspection\"",
+									"  },",
+									"  {",
+									"    \"code\": \"LAB_SCHEDULED\",",
+									"    \"name\": \"LAB SCHEDULED\",",
+									"    \"description\": \"Frequency of testing that is scheduled (in case of Odisha, it's on fort-nighly basis.)\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.QualityTestLab",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"TESTING_IN_HOUSE_LAB\",",
+									"    \"name\": \"Testing In-House Lab\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.Process",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"DEWATS_TECHNOLOGY\",",
+									"    \"name\": \"DEWATS TECHNOLOGY\",",
+									"    \"type\": \"DEWATS\",",
+									"    \"stages\": [",
+									"      {",
+									"        \"stageCode\": \"AERATION\"",
+									"      }",
+									"    ],",
+									"    \"wasteType\": \"FAECAL_SLUDGE\"",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.QualityCriteria",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"    \"code\": \"TDS\",",
+									"    \"unit\": \"MGPL\",",
+									"    \"parameter\": \"TDS\",",
+									"    \"benchmarkRule\": \"LSTOREQ\",",
+									"    \"benchmarkValues\": [",
+									"      50",
+									"    ]",
+									"  },",
+									"  {",
+									"    \"code\": \"TSS\",",
+									"    \"unit\": \"MGPL\",",
+									"    \"parameter\": \"TSS\",",
+									"    \"benchmarkRule\": \"LSTOREQ\",",
+									"    \"benchmarkValues\": [",
+									"      50",
+									"    ]",
+									"  },",
+									"  {",
+									"    \"code\": \"COD\",",
+									"    \"unit\": \"MGPL\",",
+									"    \"parameter\": \"COD\",",
+									"    \"benchmarkRule\": \"LSTOREQ\",",
+									"    \"benchmarkValues\": [",
+									"      50",
+									"    ],",
+									"    \"allowedDeviation\": 0",
+									"  },",
+									"  {",
+									"    \"code\": \"BOD\",",
+									"    \"unit\": \"MGPL\",",
+									"    \"parameter\": \"BOD\",",
+									"    \"benchmarkRule\": \"LSTOREQ\",",
+									"    \"benchmarkValues\": [",
+									"      30",
+									"    ]",
+									"  },",
+									"  {",
+									"    \"code\": \"PH\",",
+									"    \"unit\": \"NA\",",
+									"    \"parameter\": \"PH\",",
+									"    \"benchmarkRule\": \"BTW\",",
+									"    \"benchmarkValues\": [",
+									"      6.5,",
+									"      7.5",
+									"    ],",
+									"    \"allowedDeviation\": 0",
+									"  }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.Plant",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"  {",
+									"        \"ULBS\": \"pg.citya,pg.cityb\",",
+									"        \"code\": \"CTA001\",",
+									"        \"name\": \"CityA FSTP\",",
+									"        \"active\": true,",
+									"        \"PlusCode\": \"JQ2R+7G Khapar Kheri, Punjab\",",
+									"        \"plantType\": \"FEACAL_SLUDGE_TREATMENT_PLANT\",",
+									"        \"processes\": [",
+									"            \"DEWATS_TECHNOLOGY\"",
+									"        ],",
+									"        \"wasteType\": [",
+									"            \"FAECAL_SLUDGE\"",
+									"        ],",
+									"        \"plantConfig\": \"PLANT_CONFIGURATION_UPYOG\",",
+									"        \"PlantLocation\": \"CityA\",",
+									"        \"PlantOperationalTimings\": \"10.00am-08.00pm\",",
+									"        \"PlantOperationalCapacityKLD\": \"50\"",
+									"    },",
+									"",
+									"    {",
+									"        \"PlantCode\": \"CTC002\",",
+									"        \"PlantName\": \"CityC SeTPP\",",
+									"        \"active\": true,",
+									"        \"PlantType\": \"SeTP\",",
+									"        \"PlantLocation\": \"CityC\",",
+									"        \"processes\": [",
+									"            \"DEWATS_TECHNOLOGY\"",
+									"        ],",
+									"        \"wasteType\": [",
+									"            \"FAECAL_SLUDGE\"",
+									"        ],",
+									"        \"plantConfig\": \"\",",
+									"        \"PlusCode\": \"MPFQ+V2 Sahibzada Ajit Singh Nagar, Punjab\",",
+									"        \"PlantOperationalTimings\": \"10.00am-06.00pm\",",
+									"        \"PlantOperationalCapacityKLD\": \"100\",",
+									"        \"ULBS\": \"pg.cityc,pg.cityd,pg.citye\"",
+									"    }",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PQM.TestStandard",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestName = pm.info.requestName;",
+									"",
+									"var data= [",
+									"",
+									"]",
+									"",
+									"pm.collectionVariables.set(\"requestName\", requestName);",
+									"",
+									"pm.collectionVariables.set(\"data\", data);",
+									"",
+									"var obj = pm.collectionVariables.get(\"data\");",
+									"",
+									"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.collectionVariables.get(\"data\");",
+									"",
+									"var items = pm.collectionVariables.get(\"i\");",
+									"",
+									"",
+									"if (items < data.length){",
+									"",
+									"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+									"",
+									"    pm.execution.setNextRequest(pm.collectionVariables.get(\"requestName\"));",
+									"}else{",
+									"    pm.collectionVariables.set(\"i\", 0);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"Mdms\": {\n        \"tenantId\": \"{{tenant}}\",\n        \"schemaCode\": \"{{requestName}}\",\n        \"uniqueIdentifier\": null,\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/mdms-v2/v2/_create/{{requestName}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"mdms-v2",
+								"v2",
+								"_create",
+								"{{requestName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
