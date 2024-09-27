@@ -2,7 +2,7 @@ package org.egov.individual.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.models.Error;
-import org.egov.common.models.core.SearchResponse;
+import org.egov.individual.web.models.SearchResponse;
 import org.egov.common.models.individual.Address;
 import org.egov.common.models.individual.AddressType;
 import org.egov.common.models.individual.Identifier;

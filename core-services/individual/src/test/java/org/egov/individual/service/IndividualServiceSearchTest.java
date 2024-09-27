@@ -3,7 +3,7 @@ package org.egov.individual.service;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.data.query.exception.QueryBuilderException;
 import org.egov.common.helper.RequestInfoTestBuilder;
-import org.egov.common.models.core.SearchResponse;
+import org.egov.individual.web.models.SearchResponse;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.service.IdGenService;
 import org.egov.individual.helper.IndividualSearchTestBuilder;
