@@ -4,7 +4,7 @@ package org.egov.individual.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.common.models.core.SearchResponse;
+import org.egov.individual.web.models.SearchResponse;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.IndividualBulkRequest;
 import org.egov.common.models.individual.IndividualBulkResponse;
@@ -95,7 +95,7 @@ public class IndividualApiController {
 
         IndividualBulkResponse response = IndividualBulkResponse.builder()
                 .individual(searchResponse.getResponse())
-                .totalCount(searchResponse.getTotalCount())
+//                .totalCount(searchResponse.getTotalCount())
                 .responseInfo(ResponseInfoFactory.createResponseInfo(request.getRequestInfo(), true))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
