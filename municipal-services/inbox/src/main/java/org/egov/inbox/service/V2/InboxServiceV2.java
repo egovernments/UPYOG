@@ -108,11 +108,10 @@ public class InboxServiceV2 {
         hashParamsWhereverRequiredBasedOnConfiguration(inboxRequest.getInbox().getModuleSearchCriteria(), inboxQueryConfiguration);
         List<Inbox> items = getInboxItems(inboxRequest, inboxQueryConfiguration.getIndex());
         enrichProcessInstanceInInboxItems(items);
-//        Integer totalCount = CollectionUtils.isEmpty(inboxRequest.getInbox().getProcessSearchCriteria().getStatus()) ? 0 : getTotalApplicationCount(inboxRequest, inboxQueryConfiguration.getIndex());
+        Integer totalCount = CollectionUtils.isEmpty(inboxRequest.getInbox().getProcessSearchCriteria().getStatus()) ? 0 : getTotalApplicationCount(inboxRequest, inboxQueryConfiguration.getIndex());
         List<HashMap<String, Object>> statusCountMap = CollectionUtils.isEmpty(inboxRequest.getInbox().getProcessSearchCriteria().getStatus()) ? new ArrayList<>() : getStatusCountMap(inboxRequest, inboxQueryConfiguration.getIndex());
-//        Integer nearingSlaCount = CollectionUtils.isEmpty(inboxRequest.getInbox().getProcessSearchCriteria().getStatus()) ? 0 : getApplicationsNearingSlaCount(inboxRequest, inboxQueryConfiguration.getIndex());
-//        InboxResponse inboxResponse = InboxResponse.builder().items(items).totalCount(totalCount).statusMap(statusCountMap).nearingSlaCount(nearingSlaCount).build();
-        InboxResponse inboxResponse = InboxResponse.builder().items(items).statusMap(statusCountMap).build();
+        Integer nearingSlaCount = CollectionUtils.isEmpty(inboxRequest.getInbox().getProcessSearchCriteria().getStatus()) ? 0 : getApplicationsNearingSlaCount(inboxRequest, inboxQueryConfiguration.getIndex());
+        InboxResponse inboxResponse = InboxResponse.builder().items(items).totalCount(totalCount).statusMap(statusCountMap).nearingSlaCount(nearingSlaCount).build();
 
         return inboxResponse;
     }
@@ -248,8 +247,8 @@ public class InboxServiceV2 {
 //        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
         log.info("response: " + response);
         Integer totalCount = 0;
-        if(response.containsKey(COUNT_CONSTANT)){
-            totalCount = (Integer) response.get(COUNT_CONSTANT);
+        if(response.containsKey("total")){
+            totalCount = (Integer) response.get("total");
         }else{
             throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query");
         }
@@ -453,8 +452,8 @@ public class InboxServiceV2 {
 //    ------------------------------------------------------------------        
 //            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
             Integer currentCount = 0;
-            if(response.containsKey(COUNT_CONSTANT)){
-                currentCount = (Integer) response.get(COUNT_CONSTANT);
+            if(response.containsKey("total")){
+                currentCount = (Integer) response.get("total");
             }else{
                 throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query");
             }
