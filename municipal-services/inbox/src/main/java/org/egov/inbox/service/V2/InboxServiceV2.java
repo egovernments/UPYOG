@@ -254,25 +254,41 @@ public class InboxServiceV2 {
 //        }
 //        return totalCount;
         Integer currentCount = 0;
-        if (response.containsKey("total")) {
-            Object totalValue = response.get("total");
+//        if (response.containsKey("total")) {
+//            Object totalValue = response.get("total");
+//
+//            if (totalValue instanceof Integer) {
+//                currentCount = (Integer) totalValue;
+//            } else if (totalValue instanceof Long) {
+//                currentCount = ((Long) totalValue).intValue();  // Convert Long to Integer
+//            } else if (totalValue instanceof String) {
+//                try {
+//                    currentCount = Integer.parseInt((String) totalValue);
+//                } catch (NumberFormatException e) {
+//                    throw new CustomException("INBOX_COUNT_ERR", "Invalid format for 'total': " + totalValue);
+//                }
+//            } else {
+//                throw new CustomException("INBOX_COUNT_ERR", "'total' has an unsupported type: " + totalValue.getClass());
+//            }
+//        } else {
+//            throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query - 'total' key missing.");
+//        }
+        if (response.containsKey("hits") && response.get("hits") instanceof Map &&
+        	    ((Map<String, Object>) response.get("hits")).containsKey("total")) {
 
-            if (totalValue instanceof Integer) {
-                currentCount = (Integer) totalValue;
-            } else if (totalValue instanceof Long) {
-                currentCount = ((Long) totalValue).intValue();  // Convert Long to Integer
-            } else if (totalValue instanceof String) {
-                try {
-                    currentCount = Integer.parseInt((String) totalValue);
-                } catch (NumberFormatException e) {
-                    throw new CustomException("INBOX_COUNT_ERR", "Invalid format for 'total': " + totalValue);
-                }
-            } else {
-                throw new CustomException("INBOX_COUNT_ERR", "'total' has an unsupported type: " + totalValue.getClass());
-            }
-        } else {
-            throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query - 'total' key missing.");
-        }
+        	    Map<String, Object> total = (Map<String, Object>) ((Map<String, Object>) response.get("hits")).get("total");
+
+        	    if (total.containsKey("value")) {
+        	    	currentCount = (Integer) total.get("value");
+        	        System.out.println("Total hits: " + currentCount);
+        	    } else {
+        	        throw new IllegalArgumentException("The 'value' field is missing in 'total'.");
+        	    }
+        	} else {
+        	    throw new IllegalArgumentException("The 'total' field is missing in 'hits'.");
+        	}
+
+
       return currentCount;
 
     }
