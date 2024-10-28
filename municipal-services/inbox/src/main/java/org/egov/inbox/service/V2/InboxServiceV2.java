@@ -245,14 +245,36 @@ public class InboxServiceV2 {
         Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, requestEntity);
 //        ---------------------------------------------
 //        Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
-        log.info("response: " + response);
-        Integer totalCount = 0;
-        if(response.containsKey("total")){
-            totalCount = (Integer) response.get("total");
-        }else{
-            throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query");
+//        log.info("response: " + response);
+//        Integer totalCount = 0;
+//        if(response.containsKey("total")){
+//            totalCount = (Integer) response.get("total");
+//        }else{
+//            throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query");
+//        }
+//        return totalCount;
+        Integer currentCount = 0;
+        if (response.containsKey("total")) {
+            Object totalValue = response.get("total");
+
+            if (totalValue instanceof Integer) {
+                currentCount = (Integer) totalValue;
+            } else if (totalValue instanceof Long) {
+                currentCount = ((Long) totalValue).intValue();  // Convert Long to Integer
+            } else if (totalValue instanceof String) {
+                try {
+                    currentCount = Integer.parseInt((String) totalValue);
+                } catch (NumberFormatException e) {
+                    throw new CustomException("INBOX_COUNT_ERR", "Invalid format for 'total': " + totalValue);
+                }
+            } else {
+                throw new CustomException("INBOX_COUNT_ERR", "'total' has an unsupported type: " + totalValue.getClass());
+            }
+        } else {
+            throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query - 'total' key missing.");
         }
-        return totalCount;
+      return currentCount;
+
     }
 
     public List<HashMap<String, Object>> getStatusCountMap(InboxRequest inboxRequest, String indexName){
@@ -451,17 +473,42 @@ public class InboxServiceV2 {
             Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, requestEntity);
 //    ------------------------------------------------------------------        
 //            Map<String, Object> response = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, finalQueryBody);
+//            Integer currentCount = 0;
+//            if(response.containsKey("total")){
+//                currentCount = (Integer) response.get("total");
+//            }else{
+//                throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query");
+//            }
+//            totalCount += currentCount;
+//        }
             Integer currentCount = 0;
-            if(response.containsKey("total")){
-                currentCount = (Integer) response.get("total");
-            }else{
-                throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query");
+            if (response.containsKey("total")) {
+                Object totalValue = response.get("total");
+
+                if (totalValue instanceof Integer) {
+                    currentCount = (Integer) totalValue;
+                } else if (totalValue instanceof Long) {
+                    currentCount = ((Long) totalValue).intValue();  // Convert Long to Integer
+                } else if (totalValue instanceof String) {
+                    try {
+                        currentCount = Integer.parseInt((String) totalValue);
+                    } catch (NumberFormatException e) {
+                        throw new CustomException("INBOX_COUNT_ERR", "Invalid format for 'total': " + totalValue);
+                    }
+                } else {
+                    throw new CustomException("INBOX_COUNT_ERR", "'total' has an unsupported type: " + totalValue.getClass());
+                }
+            } else {
+                throw new CustomException("INBOX_COUNT_ERR", "Error occurred while executing ES count query - 'total' key missing.");
             }
-            totalCount += currentCount;
-        }
+
+            if (currentCount != null) {
+                totalCount += currentCount;
+            }
+
 
         return totalCount;
-
+        }
     }
 
 
