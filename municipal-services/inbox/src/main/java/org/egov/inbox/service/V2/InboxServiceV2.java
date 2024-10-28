@@ -507,8 +507,8 @@ public class InboxServiceV2 {
             }
 
 
-        return totalCount;
         }
+		return totalCount;
     }
 
 
