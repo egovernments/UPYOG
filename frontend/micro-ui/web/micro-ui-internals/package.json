@@ -4,10 +4,7 @@
   "main": "index.js",
   "workspaces":  [
     "packages/libraries",
-    "packages/css",
-    "example",
-    "packages/react-components",
-    "packages/modules/*"   
+    "packages/react-components"
   ],
   "license": "MIT",
   "private": true,
@@ -78,10 +75,10 @@
     "microbundle-crl": "^0.13.11"
   },
   "resolutions": {
+    "**/styled-components": "5.0.0",
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
-    "**/styled-components": "5.0.0"
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
   }
 }
