@@ -13,10 +13,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
+@Builder
 public class EgovPdfResp {
 	
 	@JsonProperty("filestoreIds")
