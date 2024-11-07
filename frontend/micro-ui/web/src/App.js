@@ -36,7 +36,11 @@ import { initWSComponents } from "@upyog/digit-ui-module-ws";
 // import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
-import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
+import {
+  PTRModule,
+  PTRLinks,
+  PTRComponents,
+} from "@upyog-niua/upyog-ui-module-ptr";
 
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 
@@ -81,9 +85,10 @@ window.Digit.ComponentRegistryService.setupRegistry({
   TLModule,
   TLLinks,
   ReceiptsModule,
-  PTRModule, 
+  PTRModule,
   PTRLinks,
-  ...PTRComponents
+  ...PTRComponents,
+
 });
 
 initPGRComponents();

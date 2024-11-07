@@ -109,8 +109,8 @@ const initDigitUI = () => {
     HRMSModule,
     ReceiptsModule,
     BillsModule,
-    PTRModule,
-    PTRLinks,
+    PTRModule, 
+    PTRLinks, 
     ...PTRComponents
     // TLModule,
     // TLLinks,
