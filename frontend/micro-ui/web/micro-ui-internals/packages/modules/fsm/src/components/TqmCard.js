@@ -95,7 +95,6 @@ const TqmCard = ({ reRoute = true }) => {
   };
 
   const handleNavigation = (e) => {
-    if (e) e.preventDefault();
     const url = getLandingUrl();
     if (url) {
       window.location.href = url;
